@@ -240,25 +240,50 @@ function isGameOver() {
 // ===== WALLET & IRYS =====
 
 async function connectWallet() {
-  const chainId = "0x4f6";
+  if (typeof window.ethereum === "undefined") {
+    showToast("⚠️ Please open this game in MetaMask or another Web3 wallet browser.");
+    return;
+  }
+
+  const chainId = "0x4f6"; // Irys Testnet
   try {
-    await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId }],
+    });
   } catch (err) {
     if (err.code === 4902) {
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [{
-          chainId,
-          chainName: "Irys Testnet",
-          rpcUrls: ["https://testnet-rpc.irys.xyz"],
-          nativeCurrency: { name: "IRYS", symbol: "IRYS", decimals: 18 },
-          blockExplorerUrls: ["https://testnet-explorer.irys.xyz"]
-        }]
-      });
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId,
+            chainName: "Irys Testnet",
+            rpcUrls: ["https://testnet-rpc.irys.xyz"],
+            nativeCurrency: {
+              name: "IRYS",
+              symbol: "IRYS",
+              decimals: 18,
+            },
+            blockExplorerUrls: ["https://testnet-explorer.irys.xyz"]
+          }]
+        });
+      } catch (addErr) {
+        showToast("❌ Failed to add Irys network.");
+        return;
+      }
+    } else {
+      showToast("❌ Failed to switch network.");
+      return;
     }
   }
-  await window.ethereum.request({ method: "eth_requestAccounts" });
-  showToast("✅ Wallet connected");
+
+  try {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    showToast("✅ Wallet connected");
+  } catch (err) {
+    showToast("❌ Wallet connection rejected.");
+  }
 }
 
 async function uploadScoreToIrys() {
