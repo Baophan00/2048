@@ -12,6 +12,7 @@ bgMusic.muted = true;
 const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
 const leaderboardBox = document.getElementById("leaderboard");
+const playBtn = document.getElementById("play-btn");
 
 function showToast(message) {
   toast.textContent = message;
@@ -57,10 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
   }, { passive: false });
 
-  document.getElementById("restart").addEventListener("click", restartGame);
   document.getElementById("music-btn").addEventListener("click", toggleMusic);
-  document.getElementById("play-btn").addEventListener("click", connectAndPayToPlay);
-
+  playBtn.addEventListener("click", connectAndPayToPlay);
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
   loadTopScores();
@@ -83,6 +82,8 @@ function handleSwipe(dir) {
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
       uploadScoreToIrys();
+      gameUnlocked = false;
+      playBtn.style.display = "inline-block";
     }
   }
 }
@@ -101,19 +102,11 @@ document.addEventListener("keydown", e => {
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
       uploadScoreToIrys();
+      gameUnlocked = false;
+      playBtn.style.display = "inline-block";
     }
   }
 });
-
-function restartGame() {
-  if (!gameUnlocked) return preventPlay();
-  document.getElementById("game-over").style.display = "none";
-  setup();
-  updateBoard();
-  generate();
-  generate();
-  uploadBtn.style.display = "none";
-}
 
 function showSubmitButton() {
   uploadBtn.style.display = "inline-block";
@@ -124,6 +117,9 @@ function setup() {
   board = Array.from({ length: 4 }, () => Array(4).fill(0));
   score = 0;
   updateScore();
+  updateBoard();
+  generate();
+  generate();
 }
 
 function updateScore() {
@@ -245,8 +241,6 @@ function isGameOver() {
 }
 
 async function connectAndPayToPlay() {
-  if (gameUnlocked) return;
-
   if (typeof window.ethereum === "undefined") {
     showToast("⚠️ Open this in MetaMask or Web3 browser.");
     return;
@@ -282,14 +276,16 @@ async function connectAndPayToPlay() {
       method: "eth_sendTransaction",
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
-        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c", // custom wallet address
+        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
         value: "0x6a94d74f430000" // 0.03 IRYS
       }]
     });
 
     showToast("✅ Payment sent! TX: " + tx.slice(0, 10) + "...");
     gameUnlocked = true;
-    document.getElementById("play-btn").style.display = "none";
+    playBtn.style.display = "none";
+    document.getElementById("game-over").style.display = "none";
+    setup();
   } catch (err) {
     console.error("Payment failed:", err);
     showToast("❌ Payment cancelled or failed.");
