@@ -6,6 +6,7 @@ let isConnected = false;
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
+bgMusic.muted = true; // mặc định tắt khi mở
 
 const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
@@ -23,11 +24,14 @@ document.addEventListener("click", () => {
 }, { once: true });
 
 function toggleMusic() {
-  if (bgMusic.paused) {
+  if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
     bgMusic.play();
+    document.getElementById("music-btn").textContent = "🔊 Music";
   } else {
     bgMusic.pause();
+    bgMusic.muted = true;
+    document.getElementById("music-btn").textContent = "🔇 Music";
   }
 }
 
@@ -45,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   hammertime.on("swipeup", () => handleSwipe("up"));
   hammertime.on("swipedown", () => handleSwipe("down"));
 
-  // ✅ Ngăn vuốt ngang gây chuyển tab trên mobile
+  // Ngăn vuốt ngang gây chuyển tab
   let startX, startY;
   document.addEventListener("touchstart", function(e) {
     startX = e.touches[0].clientX;
@@ -61,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("restart").addEventListener("click", restartGame);
   document.getElementById("connect-btn").addEventListener("click", connectWallet);
+  document.getElementById("music-btn").addEventListener("click", toggleMusic);
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
   loadTopScores();
@@ -238,7 +243,7 @@ function isGameOver() {
   return true;
 }
 
-// ===== WALLET & IRYS =====
+// ==== Wallet + Upload ====
 
 async function connectWallet() {
   if (isConnected) {
@@ -253,36 +258,21 @@ async function connectWallet() {
     return;
   }
 
-  const chainId = "0x4f6"; // Irys Testnet
+  const chainId = "0x4f6";
   try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId }],
-    });
+    await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
   } catch (err) {
     if (err.code === 4902) {
-      try {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [{
-            chainId,
-            chainName: "Irys Testnet",
-            rpcUrls: ["https://testnet-rpc.irys.xyz"],
-            nativeCurrency: {
-              name: "IRYS",
-              symbol: "IRYS",
-              decimals: 18,
-            },
-            blockExplorerUrls: ["https://testnet-explorer.irys.xyz"]
-          }]
-        });
-      } catch (addErr) {
-        showToast("❌ Failed to add Irys network.");
-        return;
-      }
-    } else {
-      showToast("❌ Failed to switch network.");
-      return;
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId,
+          chainName: "Irys Testnet",
+          rpcUrls: ["https://testnet-rpc.irys.xyz"],
+          nativeCurrency: { name: "IRYS", symbol: "IRYS", decimals: 18 },
+          blockExplorerUrls: ["https://testnet-explorer.irys.xyz"]
+        }]
+      });
     }
   }
 
