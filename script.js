@@ -19,11 +19,6 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
-document.addEventListener("click", () => {
-  bgMusic.muted = false;
-  bgMusic.play().catch(() => {});
-}, { once: true });
-
 function toggleMusic() {
   if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
@@ -287,7 +282,7 @@ async function connectAndPayToPlay() {
       method: "eth_sendTransaction",
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
-        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
+        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c", // custom wallet address
         value: "0x6a94d74f430000" // 0.03 IRYS
       }]
     });
