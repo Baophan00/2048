@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   playBtn.addEventListener("click", connectAndPayToPlay);
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
-  loadGlobalLeaderboard();
+  loadTopScores();
 });
 
 function preventPlay() {
@@ -293,16 +293,35 @@ async function connectAndPayToPlay() {
 
 async function uploadScoreToIrys() {
   try {
-    const { WebIrys } = await import("https://esm.sh/@irys/sdk@0.0.3?bundle");
-    const irys = new WebIrys({ network: "devnet", token: "ethereum", wallet: window.ethereum });
-    await irys.ready();
-    const data = JSON.stringify({ player: await irys.address, score, timestamp: new Date().toISOString() });
-    const receipt = await irys.upload(data, {
-      tags: [ { name: "App", value: "2048-game" }, { name: "Type", value: "Score" } ]
+    const { WebIrys } = await import("https://esm.sh/@irys/sdk?target=es2020&bundle&browser");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    const irys = new WebIrys({
+      network: "devnet",
+      token: "ethereum",
+      wallet: signer
     });
+
+    await irys.ready();
+
+    const data = JSON.stringify({
+      player: await irys.address,
+      score,
+      timestamp: new Date().toISOString()
+    });
+
+    const receipt = await irys.upload(data, {
+      tags: [
+        { name: "App", value: "2048-game" },
+        { name: "Type", value: "Score" }
+      ]
+    });
+
     showToast("🎉 TX ID: " + receipt.id);
     saveTxHistory(await irys.address, score);
-    loadGlobalLeaderboard();
+    loadTopScores();
+
   } catch (err) {
     console.error("Upload failed:", err);
     showToast("❌ Upload failed. See console.");
@@ -316,53 +335,8 @@ function saveTxHistory(addr, score) {
   localStorage.setItem("topScores", JSON.stringify(history.slice(0, 5)));
 }
 
-async function loadGlobalLeaderboard() {
-  try {
-    const query = {
-      query: `
-        query {
-          transactions(
-            tags: [
-              { name: "App", values: ["2048-game"] },
-              { name: "Type", values: ["Score"] }
-            ],
-            first: 10,
-            sort: HEIGHT_DESC
-          ) {
-            edges {
-              node {
-                id
-                owner { address }
-              }
-            }
-          }
-        }
-      `
-    };
-
-    const res = await fetch("https://arweave.net/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(query)
-    });
-
-    const data = await res.json();
-    const txs = data.data.transactions.edges;
-
-    const results = await Promise.all(txs.map(async (tx) => {
-      const res = await fetch(`https://arweave.net/${tx.node.id}`);
-      const json = await res.json();
-      return {
-        addr: tx.node.owner.address,
-        score: json.score
-      };
-    }));
-
-    const top = results.sort((a, b) => b.score - a.score).slice(0, 5);
-
-    leaderboardBox.innerHTML = top.map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`).join("<br>");
-  } catch (err) {
-    console.error("Global leaderboard load failed", err);
-    leaderboardBox.innerText = "Error loading global scores.";
-  }
+function loadTopScores() {
+  const top = JSON.parse(localStorage.getItem("topScores") || "[]");
+  if (top.length === 0) leaderboardBox.innerHTML = "No scores yet.";
+  else leaderboardBox.innerHTML = top.map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`).join("<br>");
 }
