@@ -287,7 +287,7 @@ async function connectAndPayToPlay() {
       method: "eth_sendTransaction",
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
-        to: "0x000000000000000000000000000000000000dead",
+        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
         value: "0x6a94d74f430000" // 0.03 IRYS
       }]
     });
