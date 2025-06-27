@@ -1,12 +1,13 @@
+// script.js
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
-let isConnected = false;
+let gameUnlocked = false;
 
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
-bgMusic.muted = true; // mặc định tắt khi mở
+bgMusic.muted = true;
 
 const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
@@ -44,12 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
-  hammertime.on("swipeleft", () => handleSwipe("left"));
-  hammertime.on("swiperight", () => handleSwipe("right"));
-  hammertime.on("swipeup", () => handleSwipe("up"));
-  hammertime.on("swipedown", () => handleSwipe("down"));
+  hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
+    if (!gameUnlocked) return preventPlay();
+    handleSwipe(ev.type.replace("swipe", ""));
+  });
 
-  // Ngăn vuốt ngang gây chuyển tab
+  // Ngăn vuốt ngang
   let startX, startY;
   document.addEventListener("touchstart", function(e) {
     startX = e.touches[0].clientX;
@@ -58,18 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("touchmove", function(e) {
     const deltaX = e.touches[0].clientX - startX;
     const deltaY = e.touches[0].clientY - startY;
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      e.preventDefault();
-    }
+    if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
   }, { passive: false });
 
   document.getElementById("restart").addEventListener("click", restartGame);
-  document.getElementById("connect-btn").addEventListener("click", connectWallet);
   document.getElementById("music-btn").addEventListener("click", toggleMusic);
+  document.getElementById("play-btn").addEventListener("click", connectAndPayToPlay);
+
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
   loadTopScores();
 });
+
+function preventPlay() {
+  showToast("🔒 Please unlock the game first");
+}
 
 function handleSwipe(dir) {
   let moved = false;
@@ -89,6 +93,7 @@ function handleSwipe(dir) {
 }
 
 document.addEventListener("keydown", e => {
+  if (!gameUnlocked) return preventPlay();
   let moved = false;
   if (e.key === "ArrowLeft") moved = moveLeft();
   else if (e.key === "ArrowRight") moved = moveRight();
@@ -106,6 +111,7 @@ document.addEventListener("keydown", e => {
 });
 
 function restartGame() {
+  if (!gameUnlocked) return preventPlay();
   document.getElementById("game-over").style.display = "none";
   setup();
   updateBoard();
@@ -243,18 +249,11 @@ function isGameOver() {
   return true;
 }
 
-// ==== Wallet + Upload ====
-
-async function connectWallet() {
-  if (isConnected) {
-    isConnected = false;
-    showToast("👋 Wallet disconnected");
-    document.getElementById("connect-btn").textContent = "🔗 Connect Wallet";
-    return;
-  }
+async function connectAndPayToPlay() {
+  if (gameUnlocked) return;
 
   if (typeof window.ethereum === "undefined") {
-    showToast("⚠️ Please open this game in MetaMask or another Web3 wallet browser.");
+    showToast("⚠️ Open this in MetaMask or Web3 browser.");
     return;
   }
 
@@ -278,11 +277,27 @@ async function connectWallet() {
 
   try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    isConnected = true;
-    showToast("✅ Wallet connected");
-    document.getElementById("connect-btn").textContent = "🚫 Disconnect Wallet";
   } catch (err) {
     showToast("❌ Wallet connection rejected.");
+    return;
+  }
+
+  try {
+    const tx = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
+        to: "0x000000000000000000000000000000000000dead",
+        value: "0x6a94d74f430000" // 0.03 IRYS
+      }]
+    });
+
+    showToast("✅ Payment sent! TX: " + tx.slice(0, 10) + "...");
+    gameUnlocked = true;
+    document.getElementById("play-btn").style.display = "none";
+  } catch (err) {
+    console.error("Payment failed:", err);
+    showToast("❌ Payment cancelled or failed.");
   }
 }
 
