@@ -1,6 +1,7 @@
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
+let isConnected = false;
 
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
@@ -240,6 +241,13 @@ function isGameOver() {
 // ===== WALLET & IRYS =====
 
 async function connectWallet() {
+  if (isConnected) {
+    isConnected = false;
+    showToast("👋 Wallet disconnected");
+    document.getElementById("connect-btn").textContent = "🔗 Connect Wallet";
+    return;
+  }
+
   if (typeof window.ethereum === "undefined") {
     showToast("⚠️ Please open this game in MetaMask or another Web3 wallet browser.");
     return;
@@ -280,7 +288,9 @@ async function connectWallet() {
 
   try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
+    isConnected = true;
     showToast("✅ Wallet connected");
+    document.getElementById("connect-btn").textContent = "🚫 Disconnect Wallet";
   } catch (err) {
     showToast("❌ Wallet connection rejected.");
   }
