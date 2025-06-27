@@ -1,4 +1,3 @@
-// script.js
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
@@ -44,6 +43,20 @@ document.addEventListener("DOMContentLoaded", () => {
   hammertime.on("swiperight", () => handleSwipe("right"));
   hammertime.on("swipeup", () => handleSwipe("up"));
   hammertime.on("swipedown", () => handleSwipe("down"));
+
+  // ✅ Ngăn vuốt ngang gây chuyển tab trên mobile
+  let startX, startY;
+  document.addEventListener("touchstart", function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+  document.addEventListener("touchmove", function(e) {
+    const deltaX = e.touches[0].clientX - startX;
+    const deltaY = e.touches[0].clientY - startY;
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   document.getElementById("restart").addEventListener("click", restartGame);
   document.getElementById("connect-btn").addEventListener("click", connectWallet);
