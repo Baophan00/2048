@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>2048 Irys Arcade</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <audio id="bg-music" src="music.mp3" muted></audio>
+
+  <div class="game-container">
+    <div class="title">2048 Irys Arcade</div>
+
+    <div class="score-box">
+      <span>Score:</span> <span id="score">0</span> |
+      <span>High:</span> <span id="high-score">0</span>
+    </div>
+
+    <div id="grid-container"></div>
+
+    <button id="restart">🔄 Restart</button>
+    <button id="music-btn" onclick="toggleMusic()">🎵 Music</button>
+    <button id="connect-btn">🔗 Connect Wallet</button>
+    <button id="upload-btn" style="display: none;">📦 Submit Score</button>
+
+    <div id="game-over" class="game-over" style="display: none;">GAME OVER</div>
+    <div class="info">Use arrow keys or swipe to play</div>
+
+    <div class="leaderboard-box">
+      <h4>🏆 Top Players</h4>
+      <div id="leaderboard">No scores yet.</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
