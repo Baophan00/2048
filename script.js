@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     handleSwipe(ev.type.replace("swipe", ""));
   });
 
-  // Ngăn vuốt ngang
   let startX, startY;
   document.addEventListener("touchstart", function(e) {
     startX = e.touches[0].clientX;
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   playBtn.addEventListener("click", connectAndPayToPlay);
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
-  loadTopScores();
+  loadGlobalLeaderboard();
 });
 
 function preventPlay() {
@@ -277,7 +276,7 @@ async function connectAndPayToPlay() {
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
         to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-        value: "0x6a94d74f430000" // 0.03 IRYS
+        value: "0x6a94d74f430000"
       }]
     });
 
@@ -303,7 +302,7 @@ async function uploadScoreToIrys() {
     });
     showToast("🎉 TX ID: " + receipt.id);
     saveTxHistory(await irys.address, score);
-    loadTopScores();
+    loadGlobalLeaderboard();
   } catch (err) {
     console.error("Upload failed:", err);
     showToast("❌ Upload failed. See console.");
@@ -317,8 +316,53 @@ function saveTxHistory(addr, score) {
   localStorage.setItem("topScores", JSON.stringify(history.slice(0, 5)));
 }
 
-function loadTopScores() {
-  const top = JSON.parse(localStorage.getItem("topScores") || "[]");
-  if (top.length === 0) leaderboardBox.innerHTML = "No scores yet.";
-  else leaderboardBox.innerHTML = top.map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`).join("<br>");
+async function loadGlobalLeaderboard() {
+  try {
+    const query = {
+      query: `
+        query {
+          transactions(
+            tags: [
+              { name: "App", values: ["2048-game"] },
+              { name: "Type", values: ["Score"] }
+            ],
+            first: 10,
+            sort: HEIGHT_DESC
+          ) {
+            edges {
+              node {
+                id
+                owner { address }
+              }
+            }
+          }
+        }
+      `
+    };
+
+    const res = await fetch("https://arweave.net/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(query)
+    });
+
+    const data = await res.json();
+    const txs = data.data.transactions.edges;
+
+    const results = await Promise.all(txs.map(async (tx) => {
+      const res = await fetch(`https://arweave.net/${tx.node.id}`);
+      const json = await res.json();
+      return {
+        addr: tx.node.owner.address,
+        score: json.score
+      };
+    }));
+
+    const top = results.sort((a, b) => b.score - a.score).slice(0, 5);
+
+    leaderboardBox.innerHTML = top.map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`).join("<br>");
+  } catch (err) {
+    console.error("Global leaderboard load failed", err);
+    leaderboardBox.innerText = "Error loading global scores.";
+  }
 }
