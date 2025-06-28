@@ -16,9 +16,9 @@ const playBtn = document.getElementById("play-btn");
 const musicBtn = document.getElementById("music-btn");
 
 function showToast(message) {
-  toast.textContent = message;
+  toast.innerHTML = message; // dùng innerHTML để hiển thị link TX
   toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 3000);
+  setTimeout(() => toast.classList.remove("show"), 4000);
 }
 
 function toggleMusic() {
@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
   });
+
   document.addEventListener(
     "touchmove",
     function (e) {
@@ -65,8 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
   musicBtn.addEventListener("click", toggleMusic);
   playBtn.addEventListener("click", async () => {
     await connectAndPayToPlay();
-
-    // Phát nhạc sau khi kết nối ví và thanh toán thành công
     if (!bgMusic.paused) return;
     try {
       await bgMusic.play();
@@ -77,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   uploadBtn.addEventListener("click", uploadScoreToIrys);
-
   loadTopScores();
 });
 
@@ -156,7 +154,7 @@ function updateBoard() {
       tile.className = "tile";
       tile.textContent = board[r][c] === 0 ? "" : board[r][c];
       tile.style.background = getTileColor(board[r][c]);
-      tile.style.color = board[r][c] > 64 ? "#000" : "#fff";
+      tile.style.color = board[r][c] >= 128 ? "#000" : "#fff";
       grid.appendChild(tile);
     }
   }
@@ -185,7 +183,9 @@ function slide(row) {
     }
   }
   updateScore();
-  return row.filter((val) => val).concat(Array(4 - row.filter((val) => val).length).fill(0));
+  return row
+    .filter((val) => val)
+    .concat(Array(4 - row.filter((val) => val).length).fill(0));
 }
 
 function moveLeft() {
@@ -238,9 +238,18 @@ function moveDown() {
 
 function getTileColor(val) {
   const colors = {
-    0: "#1c1b27", 2: "#004c42", 4: "#006a5b", 8: "#008c72",
-    16: "#00bfa5", 32: "#00e6b8", 64: "#00ffcc", 128: "#3af2d2",
-    256: "#77f5df", 512: "#a8f8ec", 1024: "#d2fbf5", 2048: "#ffffff"
+    0: "#1c1b27",
+    2: "#004c42",
+    4: "#006a5b",
+    8: "#008c72",
+    16: "#00bfa5",
+    32: "#00e6b8",
+    64: "#00ffcc",
+    128: "#3af2d2",
+    256: "#77f5df",
+    512: "#a8f8ec",
+    1024: "#d2fbf5",
+    2048: "#ffffff",
   };
   return colors[val] || "#ffffff";
 }
@@ -264,18 +273,23 @@ async function connectAndPayToPlay() {
 
   const chainId = "0x4f6";
   try {
-    await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId }],
+    });
   } catch (err) {
     if (err.code === 4902) {
       await window.ethereum.request({
         method: "wallet_addEthereumChain",
-        params: [{
-          chainId,
-          chainName: "Irys Testnet",
-          rpcUrls: ["https://testnet-rpc.irys.xyz"],
-          nativeCurrency: { name: "IRYS", symbol: "IRYS", decimals: 18 },
-          blockExplorerUrls: ["https://testnet-explorer.irys.xyz"]
-        }]
+        params: [
+          {
+            chainId,
+            chainName: "Irys Testnet",
+            rpcUrls: ["https://testnet-rpc.irys.xyz"],
+            nativeCurrency: { name: "IRYS", symbol: "IRYS", decimals: 18 },
+            blockExplorerUrls: ["https://testnet-explorer.irys.xyz"],
+          },
+        ],
       });
     }
   }
@@ -288,43 +302,24 @@ async function connectAndPayToPlay() {
   }
 
   try {
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
 
-const txResponse = await signer.sendTransaction({
-  to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-  value: ethers.utils.parseEther("0.03")
-});
+    const txResponse = await signer.sendTransaction({
+      to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
+      value: ethers.utils.parseEther("0.03"),
+    });
 
-showToast("⏳ Waiting for confirmation...");
+    showToast("⏳ Waiting for confirmation...");
+    await txResponse.wait();
 
-const receipt = await txResponse.wait(); // Đợi mined xong
-
-try {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-
-  const txResponse = await signer.sendTransaction({
-    to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-    value: ethers.utils.parseEther("0.03")
-  });
-
-  showToast("⏳ Waiting for confirmation...");
-
-  const receipt = await txResponse.wait();
-
-  showToast("✅ Payment sent! TX: " + txResponse.hash.slice(0, 10) + "...");
-  gameUnlocked = true;
-
-  // UI update
-  playBtn.style.display = "none";
-  document.getElementById("game-over").style.display = "none";
-  setup(); // khởi động lại game từ đầu
-} catch (err) {
-  console.error("Payment failed:", err);
-  showToast("❌ Payment cancelled or failed.");
-}
-
+    showToast(
+      `✅ Payment sent! <a href="https://testnet-explorer.irys.xyz/tx/${txResponse.hash}" target="_blank">View TX</a>`
+    );
+    gameUnlocked = true;
+    playBtn.style.display = "none";
+    document.getElementById("game-over").style.display = "none";
+    setup();
   } catch (err) {
     console.error("Payment failed:", err);
     showToast("❌ Payment cancelled or failed.");
@@ -333,14 +328,16 @@ try {
 
 async function uploadScoreToIrys() {
   try {
-    const { WebIrys } = await import("https://esm.sh/@irys/sdk?target=es2020&bundle&browser");
+    const { WebIrys } = await import(
+      "https://esm.sh/@irys/sdk?target=es2020&bundle&browser"
+    );
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
     const irys = new WebIrys({
       network: "devnet",
       token: "ethereum",
-      wallet: signer
+      wallet: signer,
     });
 
     await irys.ready();
@@ -348,18 +345,22 @@ async function uploadScoreToIrys() {
     const data = JSON.stringify({
       player: await irys.address,
       score,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     const receipt = await irys.upload(data, {
       tags: [
         { name: "App", value: "2048-game" },
-        { name: "Type", value: "Score" }
-      ]
+        { name: "Type", value: "Score" },
+      ],
     });
 
-    showToast("🎉 TX ID: " + receipt.id);
-    saveTxHistory(await irys.address, score);
+    showToast(
+      "🎉 Score submitted! <a href='https://gateway.irys.xyz/" +
+        receipt.id +
+        "' target='_blank'>View TX</a>"
+    );
+    saveTxHistory(await irys.address, score, receipt.id);
     loadTopScores();
   } catch (err) {
     console.error("Upload failed:", err);
@@ -367,9 +368,9 @@ async function uploadScoreToIrys() {
   }
 }
 
-function saveTxHistory(addr, score) {
+function saveTxHistory(addr, score, txId) {
   const history = JSON.parse(localStorage.getItem("topScores") || "[]");
-  history.push({ addr, score });
+  history.push({ addr, score, txId });
   history.sort((a, b) => b.score - a.score);
   localStorage.setItem("topScores", JSON.stringify(history.slice(0, 5)));
 }
@@ -377,5 +378,13 @@ function saveTxHistory(addr, score) {
 function loadTopScores() {
   const top = JSON.parse(localStorage.getItem("topScores") || "[]");
   if (top.length === 0) leaderboardBox.innerHTML = "No scores yet.";
-  else leaderboardBox.innerHTML = top.map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`).join("<br>");
+  else
+    leaderboardBox.innerHTML = top
+      .map(
+        (t, i) =>
+          `${i + 1}. <a href="https://gateway.irys.xyz/${
+            t.txId
+          }" target="_blank">${t.addr.slice(0, 6)}...</a> - ${t.score}`
+      )
+      .join("<br>");
 }
