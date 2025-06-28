@@ -288,20 +288,43 @@ async function connectAndPayToPlay() {
   }
 
   try {
-    const tx = await window.ethereum.request({
-      method: "eth_sendTransaction",
-      params: [{
-        from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
-        to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-        value: "0x6a94d74f430000"
-      }]
-    });
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
 
-    showToast("✅ Payment sent! TX: " + tx.slice(0, 10) + "...");
-    gameUnlocked = true;
-    playBtn.style.display = "none";
-    document.getElementById("game-over").style.display = "none";
-    setup();
+const txResponse = await signer.sendTransaction({
+  to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
+  value: ethers.utils.parseEther("0.03")
+});
+
+showToast("⏳ Waiting for confirmation...");
+
+const receipt = await txResponse.wait(); // Đợi mined xong
+
+try {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+
+  const txResponse = await signer.sendTransaction({
+    to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
+    value: ethers.utils.parseEther("0.03")
+  });
+
+  showToast("⏳ Waiting for confirmation...");
+
+  const receipt = await txResponse.wait();
+
+  showToast("✅ Payment sent! TX: " + txResponse.hash.slice(0, 10) + "...");
+  gameUnlocked = true;
+
+  // UI update
+  playBtn.style.display = "none";
+  document.getElementById("game-over").style.display = "none";
+  setup(); // khởi động lại game từ đầu
+} catch (err) {
+  console.error("Payment failed:", err);
+  showToast("❌ Payment cancelled or failed.");
+}
+
   } catch (err) {
     console.error("Payment failed:", err);
     showToast("❌ Payment cancelled or failed.");
