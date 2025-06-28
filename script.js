@@ -1,4 +1,5 @@
-// script.js
+\import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
@@ -13,6 +14,7 @@ const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
 const leaderboardBox = document.getElementById("leaderboard");
 const playBtn = document.getElementById("play-btn");
+const musicBtn = document.getElementById("music-btn");
 
 function showToast(message) {
   toast.textContent = message;
@@ -23,12 +25,18 @@ function showToast(message) {
 function toggleMusic() {
   if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
-    bgMusic.play();
-    document.getElementById("music-btn").textContent = "🔊 Music";
+    bgMusic.play()
+      .then(() => {
+        musicBtn.textContent = "🔊 Music";
+      })
+      .catch(err => {
+        showToast("⚠️ Click again to enable music");
+        console.error("Music play failed:", err);
+      });
   } else {
     bgMusic.pause();
     bgMusic.muted = true;
-    document.getElementById("music-btn").textContent = "🔇 Music";
+    musicBtn.textContent = "🔇 Music";
   }
 }
 
@@ -45,17 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!gameUnlocked) return preventPlay();
     handleSwipe(ev.type.replace("swipe", ""));
   });
-
-  let startX, startY;
-  document.addEventListener("touchstart", function(e) {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  });
-  document.addEventListener("touchmove", function(e) {
-    const deltaX = e.touches[0].clientX - startX;
-    const deltaY = e.touches[0].clientY - startY;
-    if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
-  }, { passive: false });
 
   document.getElementById("music-btn").addEventListener("click", toggleMusic);
   playBtn.addEventListener("click", connectAndPayToPlay);
@@ -87,7 +84,7 @@ function handleSwipe(dir) {
   }
 }
 
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
   if (!gameUnlocked) return preventPlay();
   let moved = false;
   if (e.key === "ArrowLeft") moved = moveLeft();
@@ -159,7 +156,7 @@ function generate() {
 }
 
 function slide(row) {
-  row = row.filter(val => val);
+  row = row.filter((val) => val);
   for (let i = 0; i < row.length - 1; i++) {
     if (row[i] === row[i + 1]) {
       row[i] *= 2;
@@ -168,7 +165,7 @@ function slide(row) {
     }
   }
   updateScore();
-  return row.filter(val => val).concat(Array(4 - row.filter(val => val).length).fill(0));
+  return row.filter((val) => val).concat(Array(4 - row.filter((val) => val).length).fill(0));
 }
 
 function moveLeft() {
@@ -196,7 +193,7 @@ function moveRight() {
 function moveUp() {
   let moved = false;
   for (let c = 0; c < 4; c++) {
-    let col = board.map(row => row[c]);
+    let col = board.map((row) => row[c]);
     const original = [...col];
     col = slide(col);
     for (let r = 0; r < 4; r++) board[r][c] = col[r];
@@ -209,7 +206,7 @@ function moveUp() {
 function moveDown() {
   let moved = false;
   for (let c = 0; c < 4; c++) {
-    let col = board.map(row => row[c]);
+    let col = board.map((row) => row[c]);
     const original = [...col];
     col = slide(col.reverse()).reverse();
     for (let r = 0; r < 4; r++) board[r][c] = col[r];
@@ -276,7 +273,7 @@ async function connectAndPayToPlay() {
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
         to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-        value: "0x6a94d74f430000"
+        value: "0x6a94d74f430000" // 0.03 IRYS
       }]
     });
 
