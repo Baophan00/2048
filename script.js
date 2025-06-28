@@ -1,4 +1,4 @@
-\import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 
 let board = [];
 let score = 0;
@@ -8,13 +8,11 @@ let gameUnlocked = false;
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
-bgMusic.muted = true;
 
 const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
 const leaderboardBox = document.getElementById("leaderboard");
 const playBtn = document.getElementById("play-btn");
-const musicBtn = document.getElementById("music-btn");
 
 function showToast(message) {
   toast.textContent = message;
@@ -25,18 +23,12 @@ function showToast(message) {
 function toggleMusic() {
   if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
-    bgMusic.play()
-      .then(() => {
-        musicBtn.textContent = "🔊 Music";
-      })
-      .catch(err => {
-        showToast("⚠️ Click again to enable music");
-        console.error("Music play failed:", err);
-      });
+    bgMusic.play();
+    document.getElementById("music-btn").textContent = "🔊 Music";
   } else {
     bgMusic.pause();
     bgMusic.muted = true;
-    musicBtn.textContent = "🔇 Music";
+    document.getElementById("music-btn").textContent = "🔇 Music";
   }
 }
 
@@ -53,6 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!gameUnlocked) return preventPlay();
     handleSwipe(ev.type.replace("swipe", ""));
   });
+
+  let startX, startY;
+  document.addEventListener("touchstart", function (e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+  document.addEventListener(
+    "touchmove",
+    function (e) {
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
+    },
+    { passive: false }
+  );
 
   document.getElementById("music-btn").addEventListener("click", toggleMusic);
   playBtn.addEventListener("click", connectAndPayToPlay);
@@ -273,7 +280,7 @@ async function connectAndPayToPlay() {
       params: [{
         from: (await window.ethereum.request({ method: "eth_accounts" }))[0],
         to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-        value: "0x6a94d74f430000" // 0.03 IRYS
+        value: "0x6a94d74f430000"
       }]
     });
 
@@ -318,7 +325,6 @@ async function uploadScoreToIrys() {
     showToast("🎉 TX ID: " + receipt.id);
     saveTxHistory(await irys.address, score);
     loadTopScores();
-
   } catch (err) {
     console.error("Upload failed:", err);
     showToast("❌ Upload failed. See console.");
