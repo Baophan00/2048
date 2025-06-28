@@ -13,6 +13,7 @@ const toast = document.getElementById("toast");
 const uploadBtn = document.getElementById("upload-btn");
 const leaderboardBox = document.getElementById("leaderboard");
 const playBtn = document.getElementById("play-btn");
+const musicBtn = document.getElementById("music-btn");
 
 function showToast(message) {
   toast.textContent = message;
@@ -24,11 +25,11 @@ function toggleMusic() {
   if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
     bgMusic.play();
-    document.getElementById("music-btn").textContent = "🔊 Music";
+    musicBtn.textContent = "🔇 Music";
   } else {
     bgMusic.pause();
     bgMusic.muted = true;
-    document.getElementById("music-btn").textContent = "🔇 Music";
+    musicBtn.textContent = "🔊 Music";
   }
 }
 
@@ -61,8 +62,20 @@ document.addEventListener("DOMContentLoaded", () => {
     { passive: false }
   );
 
-  document.getElementById("music-btn").addEventListener("click", toggleMusic);
-  playBtn.addEventListener("click", connectAndPayToPlay);
+  musicBtn.addEventListener("click", toggleMusic);
+  playBtn.addEventListener("click", async () => {
+    await connectAndPayToPlay();
+
+    // Phát nhạc sau khi kết nối ví và thanh toán thành công
+    if (!bgMusic.paused) return;
+    try {
+      await bgMusic.play();
+      musicBtn.textContent = "🔇 Music";
+    } catch (err) {
+      console.warn("⚠️ Music playback blocked:", err);
+    }
+  });
+
   uploadBtn.addEventListener("click", uploadScoreToIrys);
 
   loadTopScores();
