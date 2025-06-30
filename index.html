@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>2048 Irys Arcade</title>
+  <title>2048 Classic</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Sửa tại đây: bỏ muted -->
-<audio id="bg-music" src="music.mp3" loop></audio>
+  <audio id="bg-music" src="music.mp3" loop></audio>
 
   <div class="game-container">
-    <div class="title">2048 Irys Arcade</div>
+    <div class="title">2048 Classic</div>
 
     <div class="score-box">
       <span>Score:</span> <span id="score">0</span> |
@@ -20,9 +19,10 @@
 
     <div id="grid-container"></div>
 
-    <button id="play-btn">▶️ Play Now</button>
+    <button id="play-btn">▶️ New Game</button>
     <button id="music-btn">🔇 Music</button>
-    <button id="upload-btn" style="display: none;">📦 Submit Score</button>
+    <!-- Off-chain: không cần submit điểm -->
+    <!-- <button id="upload-btn" style="display: none;">📦 Submit Score</button> -->
 
     <div id="game-over" class="game-over" style="display: none;">GAME OVER</div>
     <div class="info">Use arrow keys or swipe to play</div>
