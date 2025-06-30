@@ -1,9 +1,8 @@
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+// 🧹 2048 OFFCHAIN VERSION - Cleaned by removing on-chain + wallet code
 
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
-let gameUnlocked = false;
 
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
@@ -16,7 +15,7 @@ const playBtn = document.getElementById("play-btn");
 const musicBtn = document.getElementById("music-btn");
 
 function showToast(message) {
-  toast.innerHTML = message; // dùng innerHTML để hiển thị link TX
+  toast.textContent = message;
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 4000);
 }
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
-    if (!gameUnlocked) return preventPlay();
     handleSwipe(ev.type.replace("swipe", ""));
   });
 
@@ -64,24 +62,21 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   musicBtn.addEventListener("click", toggleMusic);
-  playBtn.addEventListener("click", async () => {
-    await connectAndPayToPlay();
-    if (!bgMusic.paused) return;
-    try {
-      await bgMusic.play();
-      musicBtn.textContent = "🔇 Music";
-    } catch (err) {
-      console.warn("⚠️ Music playback blocked:", err);
+  playBtn.addEventListener("click", () => {
+    document.getElementById("game-over").style.display = "none";
+    setup();
+    if (bgMusic.paused) {
+      try {
+        bgMusic.play();
+        musicBtn.textContent = "🔇 Music";
+      } catch (err) {
+        console.warn("⚠️ Music playback blocked:", err);
+      }
     }
   });
 
-  uploadBtn.addEventListener("click", uploadScoreToIrys);
   loadTopScores();
 });
-
-function preventPlay() {
-  showToast("🔒 Please unlock the game first");
-}
 
 function handleSwipe(dir) {
   let moved = false;
@@ -95,15 +90,12 @@ function handleSwipe(dir) {
     if (score >= 1000) showSubmitButton();
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
-      uploadScoreToIrys();
-      gameUnlocked = false;
-      playBtn.style.display = "inline-block";
+      showToast("🎮 Game Over!");
     }
   }
 }
 
 document.addEventListener("keydown", (e) => {
-  if (!gameUnlocked) return preventPlay();
   let moved = false;
   if (e.key === "ArrowLeft") moved = moveLeft();
   else if (e.key === "ArrowRight") moved = moveRight();
@@ -115,9 +107,7 @@ document.addEventListener("keydown", (e) => {
     if (score >= 1000) showSubmitButton();
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
-      uploadScoreToIrys();
-      gameUnlocked = false;
-      playBtn.style.display = "inline-block";
+      showToast("🎮 Game Over!");
     }
   }
 });
@@ -265,126 +255,11 @@ function isGameOver() {
   return true;
 }
 
-async function connectAndPayToPlay() {
-  if (typeof window.ethereum === "undefined") {
-    showToast("⚠️ Open this in MetaMask or Web3 browser.");
-    return;
-  }
-
-  const chainId = "0x4f6";
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId }],
-    });
-  } catch (err) {
-    if (err.code === 4902) {
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId,
-            chainName: "Irys Testnet",
-            rpcUrls: ["https://testnet-rpc.irys.xyz"],
-            nativeCurrency: { name: "IRYS", symbol: "IRYS", decimals: 18 },
-            blockExplorerUrls: ["https://testnet-explorer.irys.xyz"],
-          },
-        ],
-      });
-    }
-  }
-
-  try {
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-  } catch (err) {
-    showToast("❌ Wallet connection rejected.");
-    return;
-  }
-
-  try {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    const txResponse = await signer.sendTransaction({
-      to: "0xf137e228c9b44c6fa6332698e5c6bce429683d6c",
-      value: ethers.utils.parseEther("0.03"),
-    });
-
-    showToast("⏳ Waiting for confirmation...");
-    await txResponse.wait();
-
-    showToast(
-      `✅ Payment sent! <a href="https://testnet-explorer.irys.xyz/tx/${txResponse.hash}" target="_blank">View TX</a>`
-    );
-    gameUnlocked = true;
-    playBtn.style.display = "none";
-    document.getElementById("game-over").style.display = "none";
-    setup();
-  } catch (err) {
-    console.error("Payment failed:", err);
-    showToast("❌ Payment cancelled or failed.");
-  }
-}
-
-async function uploadScoreToIrys() {
-  try {
-    const { WebIrys } = await import(
-      "https://esm.sh/@irys/sdk?target=es2020&bundle&browser"
-    );
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    const irys = new WebIrys({
-      network: "devnet",
-      token: "ethereum",
-      wallet: signer,
-    });
-
-    await irys.ready();
-
-    const data = JSON.stringify({
-      player: await irys.address,
-      score,
-      timestamp: new Date().toISOString(),
-    });
-
-    const receipt = await irys.upload(data, {
-      tags: [
-        { name: "App", value: "2048-game" },
-        { name: "Type", value: "Score" },
-      ],
-    });
-
-    showToast(
-      "🎉 Score submitted! <a href='https://gateway.irys.xyz/" +
-        receipt.id +
-        "' target='_blank'>View TX</a>"
-    );
-    saveTxHistory(await irys.address, score, receipt.id);
-    loadTopScores();
-  } catch (err) {
-    console.error("Upload failed:", err);
-    showToast("❌ Upload failed. See console.");
-  }
-}
-
-function saveTxHistory(addr, score, txId) {
-  const history = JSON.parse(localStorage.getItem("topScores") || "[]");
-  history.push({ addr, score, txId });
-  history.sort((a, b) => b.score - a.score);
-  localStorage.setItem("topScores", JSON.stringify(history.slice(0, 5)));
-}
-
 function loadTopScores() {
   const top = JSON.parse(localStorage.getItem("topScores") || "[]");
   if (top.length === 0) leaderboardBox.innerHTML = "No scores yet.";
   else
     leaderboardBox.innerHTML = top
-      .map(
-        (t, i) =>
-          `${i + 1}. <a href="https://gateway.irys.xyz/${
-            t.txId
-          }" target="_blank">${t.addr.slice(0, 6)}...</a> - ${t.score}`
-      )
+      .map((t, i) => `${i + 1}. ${t.addr || "Player"} - ${t.score}`)
       .join("<br>");
 }
