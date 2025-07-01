@@ -27,6 +27,7 @@ html, body {
   font-size: 1.5rem;
   margin-bottom: 12px;
   color: #00ffcc;
+  user-select: none; /* tránh chọn chữ khi swipe */
 }
 
 .score-box {
@@ -38,6 +39,7 @@ html, body {
   color: #00ffcc;
   border: 2px solid #00ffcc;
   display: inline-block;
+  user-select: none;
 }
 
 #grid-container {
@@ -47,6 +49,7 @@ html, body {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 20px;
+  touch-action: none; /* cho phép hammerjs xử lý swipe tốt hơn */
 }
 
 .tile {
@@ -60,6 +63,7 @@ html, body {
   align-items: center;
   border-radius: 8px;
   animation: pop 0.2s ease;
+  user-select: none; /* tránh chọn chữ khi chạm */
 }
 
 @keyframes pop {
@@ -80,6 +84,7 @@ button {
   margin: 4px;
   box-shadow: 0 0 10px #00ffcc;
   transition: background 0.3s;
+  user-select: none;
 }
 
 button:hover {
@@ -90,6 +95,7 @@ button:hover {
   font-size: 0.6rem;
   opacity: 0.8;
   margin-top: 5px;
+  user-select: none;
 }
 
 .toast {
@@ -105,6 +111,7 @@ button:hover {
   opacity: 0;
   transition: all 0.4s ease;
   z-index: 9999;
+  user-select: none;
 }
 .toast.show {
   opacity: 1;
@@ -128,6 +135,15 @@ button:hover {
   margin-top: 10px;
   border-radius: 10px;
   color: #00ffcc;
+  user-select: none;
+}
+
+.game-over {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff3333;
+  margin-top: 15px;
+  user-select: none;
 }
 
 @media (max-width: 600px) {
@@ -135,4 +151,3 @@ button:hover {
   .title { font-size: 1.2rem; }
   .score-box, button { font-size: 0.6rem; }
 }
-
