@@ -28,7 +28,8 @@ const db = getFirestore(app);
 // --- Game variables ---
 let board = [];
 let score = 0;
-let highScore = localStorage.getItem("highScore") || 0;
+// Chuyển highScore thành số ngay khi lấy từ localStorage
+let highScore = parseInt(localStorage.getItem("highScore")) || 0;
 
 const bgMusic = document.getElementById("bg-music");
 bgMusic.loop = true;
@@ -171,11 +172,11 @@ function setup() {
 
 function updateScore() {
   document.getElementById("score").textContent = score;
-  document.getElementById("high-score").textContent = highScore;
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore", highScore);
   }
+  document.getElementById("high-score").textContent = highScore;
 }
 
 function updateBoard() {
