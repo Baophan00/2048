@@ -1,3 +1,31 @@
+// --- Firebase SDK imports ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// --- Firebase config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyDWyx3BaJsqscLFZoMqqZpH7jE8J_g0bOU",
+  authDomain: "arcade-7577c.firebaseapp.com",
+  projectId: "arcade-7577c",
+  storageBucket: "arcade-7577c.firebasestorage.app",
+  messagingSenderId: "801894628617",
+  appId: "1:801894628617:web:ceb6b7269f9b0b05d6e7d8",
+  measurementId: "G-DWTQRT8PWZ",
+};
+
+// --- Initialize Firebase ---
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- Game variables ---
 let board = [];
 let score = 0;
 let highScore = localStorage.getItem("highScore") || 0;
@@ -12,6 +40,7 @@ const leaderboardBox = document.getElementById("leaderboard");
 const playBtn = document.getElementById("play-btn");
 const musicBtn = document.getElementById("music-btn");
 
+// --- Utility functions ---
 function showToast(message) {
   toast.innerHTML = message;
   toast.classList.add("show");
@@ -29,7 +58,7 @@ function toggleMusic() {
       .catch((e) => {
         console.warn("Music autoplay blocked:", e);
         showToast(
-          "⚠️ Trình duyệt đang chặn phát nhạc. Vui lòng tương tác thêm."
+          "⚠️ Browser blocked music autoplay. Please interact with the page."
         );
       });
   } else {
@@ -43,14 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
   updateScore();
   musicBtn.addEventListener("click", toggleMusic);
 
-  // Hiện nút Play ban đầu
+  // Show initial Play button
   playBtn.style.display = "inline-block";
   playBtn.textContent = "▶️ Play Now";
 
-  // Ẩn nút upload vì không dùng blockchain
+  // Hide upload button (not used for blockchain here)
   uploadBtn.style.display = "none";
 
-  // Gán sự kiện nhấn nút Play Now / Play Again
+  // Play button event (Play Now / Play Again)
   playBtn.addEventListener("click", () => {
     setup();
     document.getElementById("game-over").style.display = "none";
@@ -59,14 +88,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("mascot-overlay").style.display = "none";
   });
 
-  // Thiết lập swipe
+  // Setup swipe controls with Hammer.js
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
     handleSwipe(ev.type.replace("swipe", ""));
   });
 
-  // Ngăn cuộn ngang khi swipe
+  // Prevent horizontal scroll on touch swipe
   let startX, startY;
   document.addEventListener("touchstart", function (e) {
     startX = e.touches[0].clientX;
@@ -86,19 +115,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTopScores();
 });
 
-function handleSwipe(dir) {
+function handleSwipe(direction) {
   let moved = false;
-  if (dir === "left") moved = moveLeft();
-  if (dir === "right") moved = moveRight();
-  if (dir === "up") moved = moveUp();
-  if (dir === "down") moved = moveDown();
+  if (direction === "left") moved = moveLeft();
+  if (direction === "right") moved = moveRight();
+  if (direction === "up") moved = moveUp();
+  if (direction === "down") moved = moveDown();
 
   if (moved) {
     generate();
     if (isGameOver()) {
-      document.getElementById("game-over").style.display = "block";
-      playBtn.textContent = "▶️ Play Again";
-      playBtn.style.display = "inline-block";
+      handleGameOver();
     }
   }
 }
@@ -113,12 +140,32 @@ document.addEventListener("keydown", (e) => {
   if (moved) {
     generate();
     if (isGameOver()) {
-      document.getElementById("game-over").style.display = "block";
-      playBtn.textContent = "▶️ Play Again";
-      playBtn.style.display = "inline-block";
+      handleGameOver();
     }
   }
 });
+
+function handleGameOver() {
+  document.getElementById("game-over").style.display = "block";
+  playBtn.textContent = "▶️ Play Again";
+  playBtn.style.display = "inline-block";
+
+  // Ask for player name to save score
+  let playerName = prompt(
+    "Game Over! Please enter your name to save your score:",
+    "anonymous"
+  );
+  if (!playerName || playerName.trim() === "") playerName = "anonymous";
+
+  saveScore(playerName, score, "none"); // txId is "none" for now
+
+  // Update highScore in localStorage if needed
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+  }
+  updateScore();
+}
 
 function setup() {
   board = Array.from({ length: 4 }, () => Array(4).fill(0));
@@ -154,14 +201,14 @@ function updateBoard() {
 }
 
 function generate() {
-  const empty = [];
+  const emptyCells = [];
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
-      if (board[r][c] === 0) empty.push({ r, c });
+      if (board[r][c] === 0) emptyCells.push({ r, c });
     }
   }
-  if (empty.length === 0) return;
-  const { r, c } = empty[Math.floor(Math.random() * empty.length)];
+  if (emptyCells.length === 0) return;
+  const { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
   board[r][c] = Math.random() < 0.9 ? 2 : 4;
   updateBoard();
 }
@@ -229,7 +276,7 @@ function moveDown() {
   return moved;
 }
 
-function getTileColor(val) {
+function getTileColor(value) {
   const colors = {
     0: "#1c1b27",
     2: "#004c42",
@@ -244,7 +291,7 @@ function getTileColor(val) {
     1024: "#d2fbf5",
     2048: "#ffffff",
   };
-  return colors[val] || "#ffffff";
+  return colors[value] || "#ffffff";
 }
 
 function isGameOver() {
@@ -258,18 +305,48 @@ function isGameOver() {
   return true;
 }
 
-function loadTopScores() {
-  const top = JSON.parse(localStorage.getItem("topScores") || "[]");
-  if (top.length === 0) leaderboardBox.innerHTML = "No scores yet.";
-  else
-    leaderboardBox.innerHTML = top
-      .map((t, i) => `${i + 1}. ${t.addr.slice(0, 6)}... - ${t.score}`)
-      .join("<br>");
+// --- Firestore: Load top 5 scores ---
+async function loadTopScores() {
+  try {
+    const q = query(
+      collection(db, "topScores"),
+      orderBy("score", "desc"),
+      limit(5)
+    );
+    const querySnapshot = await getDocs(q);
+    const topScores = [];
+    querySnapshot.forEach((doc) => {
+      topScores.push(doc.data());
+    });
+    if (topScores.length === 0) {
+      leaderboardBox.innerHTML = "No scores yet.";
+    } else {
+      leaderboardBox.innerHTML = topScores
+        .map(
+          (entry, i) =>
+            `${i + 1}. ${entry.addr.slice(0, 6)}... - ${entry.score}`
+        )
+        .join("<br>");
+    }
+  } catch (e) {
+    console.error("Failed to load leaderboard:", e);
+    leaderboardBox.innerHTML = "Unable to load leaderboard.";
+  }
 }
 
-function saveTxHistory(addr, score, txId) {
-  const history = JSON.parse(localStorage.getItem("topScores") || "[]");
-  history.push({ addr, score, txId });
-  history.sort((a, b) => b.score - a.score);
-  localStorage.setItem("topScores", JSON.stringify(history.slice(0, 5)));
+// --- Firestore: Save score ---
+async function saveScore(playerName, score, txId) {
+  try {
+    await addDoc(collection(db, "topScores"), {
+      addr: playerName,
+      score,
+      txId,
+      timestamp: Date.now(),
+    });
+    showToast("🏆 Your score has been saved to the leaderboard!");
+    loadTopScores();
+  } catch (e) {
+    console.error("Failed to save score:", e);
+    showToast("❌ Failed to save score. Please try again.");
+  }
 }
