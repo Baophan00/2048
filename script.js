@@ -21,8 +21,17 @@ function showToast(message) {
 function toggleMusic() {
   if (bgMusic.paused || bgMusic.muted) {
     bgMusic.muted = false;
-    bgMusic.play();
-    musicBtn.textContent = "🔇 Music";
+    bgMusic
+      .play()
+      .then(() => {
+        musicBtn.textContent = "🔇 Music";
+      })
+      .catch((e) => {
+        console.warn("Music autoplay blocked:", e);
+        showToast(
+          "⚠️ Trình duyệt đang chặn phát nhạc. Vui lòng tương tác thêm."
+        );
+      });
   } else {
     bgMusic.pause();
     bgMusic.muted = true;
