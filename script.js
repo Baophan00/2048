@@ -31,18 +31,33 @@ function toggleMusic() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  setup();
-  updateBoard();
-  generate();
-  generate();
   updateScore();
+  musicBtn.addEventListener("click", toggleMusic);
 
+  // Hiện nút Play ban đầu
+  playBtn.style.display = "inline-block";
+  playBtn.textContent = "▶️ Play Now";
+
+  // Ẩn nút upload vì không dùng blockchain
+  uploadBtn.style.display = "none";
+
+  // Gán sự kiện nhấn nút Play Now / Play Again
+  playBtn.addEventListener("click", () => {
+    setup();
+    document.getElementById("game-over").style.display = "none";
+    playBtn.style.display = "none";
+    playBtn.textContent = "▶️ Play Again";
+    document.getElementById("mascot-overlay").style.display = "none";
+  });
+
+  // Thiết lập swipe
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
     handleSwipe(ev.type.replace("swipe", ""));
   });
 
+  // Ngăn cuộn ngang khi swipe
   let startX, startY;
   document.addEventListener("touchstart", function (e) {
     startX = e.touches[0].clientX;
@@ -59,14 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { passive: false }
   );
 
-  musicBtn.addEventListener("click", toggleMusic);
-
-  // Ẩn nút play vì game luôn mở sẵn
-  playBtn.style.display = "none";
-
-  // Ẩn nút upload vì không dùng blockchain
-  uploadBtn.style.display = "none";
-
   loadTopScores();
 });
 
@@ -79,9 +86,9 @@ function handleSwipe(dir) {
 
   if (moved) {
     generate();
-    if (score >= 1000) showSubmitButton();
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
+      playBtn.textContent = "▶️ Play Again";
       playBtn.style.display = "inline-block";
     }
   }
@@ -96,18 +103,13 @@ document.addEventListener("keydown", (e) => {
 
   if (moved) {
     generate();
-    if (score >= 1000) showSubmitButton();
     if (isGameOver()) {
       document.getElementById("game-over").style.display = "block";
+      playBtn.textContent = "▶️ Play Again";
       playBtn.style.display = "inline-block";
     }
   }
 });
-
-function showSubmitButton() {
-  uploadBtn.style.display = "inline-block";
-  uploadBtn.classList.add("pulse");
-}
 
 function setup() {
   board = Array.from({ length: 4 }, () => Array(4).fill(0));

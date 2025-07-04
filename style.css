@@ -21,13 +21,14 @@ html, body {
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
   max-width: 420px;
   width: 90%;
+  position: relative; /* Để mascot định vị tuyệt đối */
 }
 
 .title {
   font-size: 1.5rem;
   margin-bottom: 12px;
   color: #00ffcc;
-  user-select: none; /* tránh chọn chữ khi swipe */
+  user-select: none;
 }
 
 .score-box {
@@ -49,7 +50,7 @@ html, body {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 20px;
-  touch-action: none; /* cho phép hammerjs xử lý swipe tốt hơn */
+  touch-action: none;
 }
 
 .tile {
@@ -63,7 +64,7 @@ html, body {
   align-items: center;
   border-radius: 8px;
   animation: pop 0.2s ease;
-  user-select: none; /* tránh chọn chữ khi chạm */
+  user-select: none;
 }
 
 @keyframes pop {
@@ -144,6 +145,51 @@ button:hover {
   color: #ff3333;
   margin-top: 15px;
   user-select: none;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* MASCOT OVERLAY */
+#mascot-overlay {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  user-select: none;
+}
+
+#mascot-overlay img {
+  max-width: 90%;
+  max-height: 90%;
+  pointer-events: none;
+}
+
+#mascot-overlay.hidden {
+  display: none;
+}
+
+/* Hiệu ứng mascot wiggle (chỉ khi có class .wiggle) */
+@keyframes mascot-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+}
+
+.wiggle {
+  animation: mascot-wiggle 1.2s infinite ease-in-out;
+  transform-origin: bottom center;
 }
 
 @media (max-width: 600px) {

@@ -7,8 +7,12 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Bỏ muted để nhạc không bị tắt mặc định -->
   <audio id="bg-music" src="music.mp3" loop></audio>
+
+  <!-- Mascot overlay -->
+  <div id="mascot-overlay" class="mascot-overlay">
+    <img id="mascot-img" src="mascot.png" alt="Mascot" class="wiggle" />
+  </div>
 
   <div class="game-container">
     <div class="title">2048 Irys Arcade</div>
@@ -20,11 +24,18 @@
 
     <div id="grid-container"></div>
 
+    <!-- Nút Play Now -->
     <button id="play-btn">▶️ Play Now</button>
-    <button id="music-btn">🔇 Music</button>
-    <button id="upload-btn" style="display: none;">📦 Submit Score</button>
 
+    <!-- Nút Upload Score -->
+    <button id="upload-btn" style="display: none;">Upload Score</button>
+
+    <!-- Nút bật/tắt nhạc -->
+    <button id="music-btn">🔇 Music</button>
+
+    <!-- Thông báo Game Over -->
     <div id="game-over" class="game-over" style="display: none;">GAME OVER</div>
+
     <div class="info">Use arrow keys or swipe to play</div>
 
     <div class="leaderboard-box">
@@ -35,7 +46,10 @@
 
   <div id="toast" class="toast"></div>
 
+  <!-- Thư viện vuốt -->
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+
+  <!-- Script chính -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
