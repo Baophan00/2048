@@ -28,7 +28,6 @@ const db = getFirestore(app);
 // --- Game variables ---
 let board = [];
 let score = 0;
-// Chuyển highScore thành số ngay khi lấy từ localStorage
 let highScore = parseInt(localStorage.getItem("highScore")) || 0;
 
 const bgMusic = document.getElementById("bg-music");
@@ -40,6 +39,11 @@ const uploadBtn = document.getElementById("upload-btn");
 const leaderboardBox = document.getElementById("leaderboard");
 const playBtn = document.getElementById("play-btn");
 const musicBtn = document.getElementById("music-btn");
+
+// Modal elements
+const nameModal = document.getElementById("name-modal");
+const nameInput = document.getElementById("player-name-input");
+const submitNameBtn = document.getElementById("submit-name-btn");
 
 // --- Utility functions ---
 function showToast(message) {
@@ -53,14 +57,10 @@ function toggleMusic() {
     bgMusic.muted = false;
     bgMusic
       .play()
-      .then(() => {
-        musicBtn.textContent = "🔇 Music";
-      })
+      .then(() => (musicBtn.textContent = "🔇 Music"))
       .catch((e) => {
         console.warn("Music autoplay blocked:", e);
-        showToast(
-          "⚠️ Browser blocked music autoplay. Please interact with the page."
-        );
+        showToast("⚠️ Browser blocked music autoplay. Please interact.");
       });
   } else {
     bgMusic.pause();
@@ -72,10 +72,8 @@ function toggleMusic() {
 document.addEventListener("DOMContentLoaded", () => {
   updateScore();
   musicBtn.addEventListener("click", toggleMusic);
-
   playBtn.style.display = "inline-block";
   playBtn.textContent = "▶️ Play Now";
-
   uploadBtn.style.display = "none";
 
   playBtn.addEventListener("click", () => {
@@ -88,19 +86,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
-  hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
-    handleSwipe(ev.type.replace("swipe", ""));
-  });
+  hammertime.on("swipeleft swiperight swipeup swipedown", (ev) =>
+    handleSwipe(ev.type.replace("swipe", ""))
+  );
 
-  let startX, startY;
-  document.addEventListener("touchstart", function (e) {
+  document.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
   });
 
   document.addEventListener(
     "touchmove",
-    function (e) {
+    (e) => {
       const deltaX = e.touches[0].clientX - startX;
       const deltaY = e.touches[0].clientY - startY;
       if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
@@ -109,6 +106,31 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   loadTopScores();
+});
+
+// --- Modal submit logic ---
+submitNameBtn.addEventListener("click", () => {
+  let playerName = nameInput.value.trim() || "anonymous";
+  saveScore(playerName, score, "none");
+
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+  }
+  updateScore();
+  nameModal.style.display = "none";
+});
+
+// Allow closing modal with Escape or click outside
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && nameModal.style.display === "flex") {
+    nameModal.style.display = "none";
+  }
+});
+nameModal.addEventListener("click", (e) => {
+  if (e.target === nameModal) {
+    nameModal.style.display = "none";
+  }
 });
 
 function handleSwipe(direction) {
@@ -120,9 +142,7 @@ function handleSwipe(direction) {
 
   if (moved) {
     generate();
-    if (isGameOver()) {
-      handleGameOver();
-    }
+    if (isGameOver()) handleGameOver();
   }
 }
 
@@ -135,9 +155,7 @@ document.addEventListener("keydown", (e) => {
 
   if (moved) {
     generate();
-    if (isGameOver()) {
-      handleGameOver();
-    }
+    if (isGameOver()) handleGameOver();
   }
 });
 
@@ -146,19 +164,10 @@ function handleGameOver() {
   playBtn.textContent = "▶️ Play Again";
   playBtn.style.display = "inline-block";
 
-  let playerName = prompt(
-    "Game Over! Please enter your name to save your score:",
-    "anonymous"
-  );
-  if (!playerName || playerName.trim() === "") playerName = "anonymous";
-
-  saveScore(playerName, score, "none");
-
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem("highScore", highScore);
-  }
-  updateScore();
+  // Show modal instead of prompt
+  nameModal.style.display = "flex";
+  nameInput.value = "";
+  nameInput.focus();
 }
 
 function setup() {
@@ -309,21 +318,20 @@ async function loadTopScores() {
     );
     const querySnapshot = await getDocs(q);
     const topScores = [];
-    querySnapshot.forEach((doc) => {
-      topScores.push(doc.data());
-    });
+    querySnapshot.forEach((doc) => topScores.push(doc.data()));
+
     if (topScores.length === 0) {
       leaderboardBox.innerHTML = "No scores yet.";
     } else {
       leaderboardBox.innerHTML = topScores
         .map(
           (entry, i) => `
-      <div class="leaderboard-entry">
-        <div class="rank">${i + 1}.</div>
-        <div class="name">${entry.addr}</div>
-        <div class="score">${entry.score}</div>
-      </div>
-    `
+          <div class="leaderboard-entry">
+            <div class="rank">${i + 1}.</div>
+            <div class="name">${entry.addr}</div>
+            <div class="score">${entry.score}</div>
+          </div>
+        `
         )
         .join("");
     }
