@@ -350,7 +350,7 @@ async function saveScore(playerName, score, txId) {
       txId,
       timestamp: Date.now(),
     });
-    showToast("🏆 Your score has been saved to the leaderboard!");
+    showToast("🏆 Your score is saved to leaderboard!");
     loadTopScores();
   } catch (e) {
     console.error("Failed to save score:", e);
