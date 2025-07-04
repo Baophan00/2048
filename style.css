@@ -304,3 +304,10 @@ button:hover {
   padding: 8px 16px;
   font-size: 0.7rem;
 }
+
+#name-input {
+  font-size: 16px; /* >=16px để tránh zoom */
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -90,6 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
     handleSwipe(ev.type.replace("swipe", ""))
   );
 
+  let startX, startY;
+  document.addEventListener("touchstart", function (e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+
   document.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -106,6 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   loadTopScores();
+
+  window.addEventListener("resize", () => {
+    if (window.innerHeight > 500) {
+      window.scrollTo(0, 0);
+    }
+  });
 });
 
 // --- Modal submit logic ---
