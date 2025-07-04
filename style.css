@@ -217,3 +217,41 @@ button:hover {
   .title { font-size: 1.2rem; }
   .score-box, button { font-size: 0.6rem; }
 }
+
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dashed #00ffcc;
+  font-size: 0.65rem;
+  color: #e0f7f5;
+}
+
+.leaderboard-entry .rank {
+  width: 1.2em;
+  text-align: right;
+  margin-right: 6px;
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.leaderboard-entry .name {
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-entry .score {
+  min-width: 3em;
+  text-align: right;
+  font-family: monospace;
+}
+
+.leaderboard-entry {
+  border-bottom: none !important;
+}
+

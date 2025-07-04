@@ -72,14 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
   updateScore();
   musicBtn.addEventListener("click", toggleMusic);
 
-  // Show initial Play button
   playBtn.style.display = "inline-block";
   playBtn.textContent = "▶️ Play Now";
 
-  // Hide upload button (not used for blockchain here)
   uploadBtn.style.display = "none";
 
-  // Play button event (Play Now / Play Again)
   playBtn.addEventListener("click", () => {
     setup();
     document.getElementById("game-over").style.display = "none";
@@ -88,14 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("mascot-overlay").style.display = "none";
   });
 
-  // Setup swipe controls with Hammer.js
   const hammertime = new Hammer(document.querySelector(".game-container"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) => {
     handleSwipe(ev.type.replace("swipe", ""));
   });
 
-  // Prevent horizontal scroll on touch swipe
   let startX, startY;
   document.addEventListener("touchstart", function (e) {
     startX = e.touches[0].clientX;
@@ -150,16 +145,14 @@ function handleGameOver() {
   playBtn.textContent = "▶️ Play Again";
   playBtn.style.display = "inline-block";
 
-  // Ask for player name to save score
   let playerName = prompt(
     "Game Over! Please enter your name to save your score:",
     "anonymous"
   );
   if (!playerName || playerName.trim() === "") playerName = "anonymous";
 
-  saveScore(playerName, score, "none"); // txId is "none" for now
+  saveScore(playerName, score, "none");
 
-  // Update highScore in localStorage if needed
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore", highScore);
@@ -323,10 +316,15 @@ async function loadTopScores() {
     } else {
       leaderboardBox.innerHTML = topScores
         .map(
-          (entry, i) =>
-            `${i + 1}. ${entry.addr.slice(0, 6)}... - ${entry.score}`
+          (entry, i) => `
+      <div class="leaderboard-entry">
+        <div class="rank">${i + 1}.</div>
+        <div class="name">${entry.addr}</div>
+        <div class="score">${entry.score}</div>
+      </div>
+    `
         )
-        .join("<br>");
+        .join("");
     }
   } catch (e) {
     console.error("Failed to load leaderboard:", e);
