@@ -113,11 +113,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadTopScores();
 
-  window.addEventListener("resize", () => {
-    if (window.innerHeight > 500) {
-      window.scrollTo(0, 0);
-    }
-  });
+  // window.addEventListener("resize", () => {
+  //   if (window.innerHeight > 500) {
+  //     window.scrollTo(0, 0);
+  //   }
+  // });
 });
 
 // --- Modal submit logic ---
