@@ -340,49 +340,15 @@ button:hover {
 }
 
 /* --- RESPONSIVE --- */
-@media (max-width: 600px) {
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    touch-action: manipulation;
-    -webkit-overflow-scrolling: touch;
-  }
 
+@media (max-width: 600px) {
   .top-players {
     max-height: 100px;
     overflow-y: auto;
   }
 
   .game-board {
-    min-height: 100dvh;
-    padding-bottom: 150px;
-    box-sizing: border-box;
-    overflow-y: auto;
-  }
-
-  .score-box {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: 6px;
-    font-size: clamp(12px, 4vw, 18px);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding: 4px 8px;
-  }
-
-  #score,
-  #high-score {
-    display: inline-block;
-    max-width: 60px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: right;
+    padding-bottom: 80px; /* để hàng cuối không bị che */
   }
 }
 
