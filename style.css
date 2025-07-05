@@ -346,6 +346,14 @@ button:hover {
     height: 100%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box;
   }
 
   .game-container {
@@ -370,6 +378,23 @@ button:hover {
   .tile {
     aspect-ratio: 1;
     width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .tile img,
+  .tile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none;
   }
 
   .score-box {
@@ -382,6 +407,7 @@ button:hover {
     overflow-y: auto;
   }
 }
+
 
 
 
