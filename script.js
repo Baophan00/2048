@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setup();
     document.getElementById("game-over").style.display = "none";
     playBtn.style.display = "none";
+    uploadBtn.style.display = "none";
     const mascotIntro = document.getElementById("mascot-intro");
     if (mascotIntro) mascotIntro.style.display = "none";
 
@@ -67,21 +68,25 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.muted = false;
       bgMusic.play().catch(() => showToast("⚠️ Tap to allow music."));
     }
+
+    window.scrollTo(0, 0);
   });
 
-  // Touch swipe handler
-  const hammertime = new Hammer(document.querySelector(".game-container"));
+  // Touch swipe handler (chỉ trên khu vực grid)
+  const hammertime = new Hammer(document.querySelector(".game-main"));
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) =>
     handleSwipe(ev.type.replace("swipe", ""))
   );
 
-  // Prevent screen bounce on touch move
-  document
-    .querySelector(".game-container")
-    .addEventListener("touchmove", (e) => e.preventDefault(), {
-      passive: false,
-    });
+  // Prevent screen bounce on touch move (trên toàn bộ body)
+  document.body.addEventListener(
+    "touchmove",
+    function (e) {
+      e.preventDefault();
+    },
+    { passive: false }
+  );
 
   loadTopScores();
 });
@@ -366,25 +371,12 @@ function handleSwipe(dir) {
 }
 
 // --- Prevent Page Scrolling (on mobile + keyboard) ---
-document.body.addEventListener(
-  "touchmove",
-  function (e) {
-    e.preventDefault();
-  },
-  { passive: false }
-);
-
-window.addEventListener("scroll", function () {
-  window.scrollTo(0, 0);
-});
-
+window.addEventListener("scroll", () => window.scrollTo(0, 0));
 window.addEventListener(
   "keydown",
-  function (e) {
-    const keys = [32, 37, 38, 39, 40]; // Space + arrow keys
-    if (keys.includes(e.keyCode)) {
-      e.preventDefault();
-    }
+  (e) => {
+    const keys = [32, 37, 38, 39, 40];
+    if (keys.includes(e.keyCode)) e.preventDefault();
   },
   { passive: false }
 );

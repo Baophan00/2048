@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
   <meta charset="UTF-8" />
   <title>2048 Irys Arcade</title>
   <link rel="stylesheet" href="style.css" />
@@ -10,44 +9,42 @@
 <body>
   <audio id="bg-music" src="music.mp3" preload="auto" playsinline></audio>
 
-
   <!-- Mascot overlay -->
   <div id="mascot-overlay" class="mascot-overlay">
     <img id="mascot-intro" src="mascot.png" alt="Mascot Intro" />
-
-
   </div>
 
   <div class="game-container">
-    <div class="title">2048 Irys Arcade</div>
 
-    <div class="score-box">
-      <span>Score:</span> <span id="score">0</span> |
-      <span>Your Best:</span> <span id="high-score">0</span>
+    <!-- HEADER -->
+    <div class="game-header">
+      <div class="title">2048 Irys Arcade</div>
+      <div class="score-box">
+        <span>Score:</span> <span id="score">0</span> |
+        <span>Your Best:</span> <span id="high-score">0</span>
+      </div>
     </div>
 
-    <div id="grid-container"></div>
+    <!-- MAIN GRID -->
+    <div class="game-main">
+      <div id="grid-container"></div>
+    </div>
 
-    <!-- Play Now button -->
-    <button id="play-btn">▶️ Play Now</button>
+    <!-- FOOTER -->
+    <div class="game-footer">
+      <button id="play-btn">▶️ Play Now</button>
+      <button id="toggle-mode-btn">🖼 Mascot Mode</button>
+      <button id="upload-btn" style="display: none;">Upload Score</button>
+      <button id="music-btn">🔇 Music</button>
 
-    <!-- Mode toggle button -->
-    <button id="toggle-mode-btn">🖼 Mascot Mode</button>
+      <div id="game-over" class="game-over" style="display: none;">GAME OVER</div>
 
-    <!-- Upload Score button (hidden by default) -->
-    <button id="upload-btn" style="display: none;">Upload Score</button>
+      <div class="info">Use arrow keys or swipe to play</div>
 
-    <!-- Music toggle button -->
-    <button id="music-btn">🔇 Music</button>
-
-    <!-- Game Over message -->
-    <div id="game-over" class="game-over" style="display: none;">GAME OVER</div>
-
-    <div class="info">Use arrow keys or swipe to play</div>
-
-    <div class="leaderboard-box">
-      <h4>🏆 Top Players</h4>
-      <div id="leaderboard">No scores yet.</div>
+      <div class="leaderboard-box">
+        <h4>🏆 Top Players</h4>
+        <div id="leaderboard">No scores yet.</div>
+      </div>
     </div>
   </div>
 
@@ -63,7 +60,7 @@
   </div>
 
   <!-- Swipe gesture library -->
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ham merjs@2.0.8/hammer.min.js"></script>
 
   <!-- Main script using ES Modules -->
   <script type="module" src="script.js"></script>
