@@ -341,16 +341,48 @@ button:hover {
 
 /* --- RESPONSIVE --- */
 
-@media (max-width: 600px) {
-  .top-players {
-    max-height: 100px;
-    overflow-y: auto;
+@media screen and (max-width: 768px) {
+  html, body {
+    height: 100dvh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
 
-  .game-board {
-    padding-bottom: 80px; /* để hàng cuối không bị che */
+  .game-container {
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 16px 8px;
+  }
+
+  .score-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 14px;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .score-box span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 60px;
+  }
+
+  #grid-container {
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #game-over {
+    font-size: 24px;
   }
 }
+
 
 
 
