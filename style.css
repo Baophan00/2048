@@ -343,6 +343,8 @@ button:hover {
 @media (max-width: 600px) {
   html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
     touch-action: manipulation;
@@ -355,8 +357,9 @@ button:hover {
   }
 
   .game-board {
-    padding-bottom: 120px; /* tăng đệm dưới để tránh che */
-    height: auto;
+    min-height: 100dvh;
+    padding-bottom: 150px;
+    box-sizing: border-box;
     overflow-y: auto;
   }
 
@@ -382,5 +385,6 @@ button:hover {
     text-align: right;
   }
 }
+
 
 
