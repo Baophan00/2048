@@ -348,18 +348,25 @@ button:hover {
   }
 
   .game-board {
-    padding-bottom: 80px; /* để hàng cuối không bị che */
+    padding-bottom: 80px;
+  }
+
+  .game-container {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 0 8px;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   #grid-container {
-    width: 100vw;
-    max-width: 100vw;
-    aspect-ratio: 1;
+    width: 90vw;
+    height: 90vw;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 1fr;
+    grid-template-rows: repeat(4, 1fr);
     gap: 4px;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 16px auto;
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -368,21 +375,17 @@ button:hover {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-  }
-
-  .game-container {
-    padding: 8px;
-    box-sizing: border-box;
-    width: 100vw;
     max-width: 100vw;
   }
 
   .score-box {
     font-size: 14px;
-    word-break: break-word;
     text-align: center;
+    flex-wrap: wrap;
+    word-break: break-word;
   }
 }
+
 
 
 
