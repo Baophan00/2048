@@ -20,7 +20,6 @@ body {
   overflow-y: auto;
 }
 
-
 /* --- GAME CONTAINER --- */
 .game-container {
   text-align: center;
@@ -30,16 +29,14 @@ body {
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
   max-width: 420px;
-  width: 90%;
+  width: 100%;
   position: relative;
-  
-
-  
+  box-sizing: border-box;
 }
 
 /* --- TITLE & SCORE --- */
 .title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 12px;
   color: #00ffcc;
   user-select: none;
@@ -60,7 +57,7 @@ body {
 /* --- GRID & TILE --- */
 #grid-container {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 1; /* giữ hình vuông toàn khung */
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 1fr;
@@ -72,9 +69,10 @@ body {
   position: relative;
 }
 
+
 .tile {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* đảm bảo hình vuông */
   background-color: #ccc;
   display: flex;
   align-items: center;
@@ -85,6 +83,7 @@ body {
   overflow: hidden;
   position: relative;
 }
+
 
 /* --- TILE IMAGES --- */
 .tile img, .tile-img {
@@ -340,8 +339,6 @@ button:hover {
 }
 
 /* --- RESPONSIVE --- */
-
-/* Mobile styles */
 @media (max-width: 600px) {
   .top-players {
     max-height: 100px;
@@ -354,16 +351,10 @@ button:hover {
   }
 
   .game-container {
-    touch-action: none; /* ngăn cuộn khi vuốt */
+    touch-action: none;
+  }
+
+  .tile {
+    font-size: 4.5vw;
   }
 }
-
-
-
-
-
-
-
-
-
-
