@@ -67,6 +67,7 @@ body {
   align-content: stretch;
   justify-content: stretch;
   position: relative;
+  touch-action: none;
 }
 
 

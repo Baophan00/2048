@@ -80,11 +80,13 @@ document.addEventListener("DOMContentLoaded", () => {
     handleSwipe(ev.type.replace("swipe", ""))
   );
 
-  // Prevent screen bounce on touch move (trên toàn bộ body)
+  // Chỉ chặn khi vuốt ngoài vùng grid-container (ví dụ vuốt trên tên, nền...)
   document.body.addEventListener(
     "touchmove",
     function (e) {
-      e.preventDefault();
+      if (!e.target.closest("#grid-container")) {
+        e.preventDefault();
+      }
     },
     { passive: false }
   );
