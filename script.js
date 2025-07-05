@@ -366,7 +366,8 @@ function handleSwipe(dir) {
 }
 
 // --- Prevent Page Scrolling (on mobile + keyboard) ---
-document.body.addEventListener(
+const grid = document.getElementById("grid-container");
+grid.addEventListener(
   "touchmove",
   function (e) {
     e.preventDefault();
@@ -374,9 +375,9 @@ document.body.addEventListener(
   { passive: false }
 );
 
-window.addEventListener("scroll", function () {
-  window.scrollTo(0, 0);
-});
+// window.addEventListener("scroll", function () {
+//   window.scrollTo(0, 0);
+// });
 
 window.addEventListener(
   "keydown",
