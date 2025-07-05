@@ -15,6 +15,11 @@ html, body {
   align-items: center;
 }
 
+body {
+  overflow-y: auto;
+}
+
+
 /* --- GAME CONTAINER --- */
 .game-container {
   text-align: center;
@@ -26,6 +31,8 @@ html, body {
   max-width: 420px;
   width: 90%;
   position: relative;
+  padding-bottom: 50px; /* Hoặc điều chỉnh đến khi vừa đủ */
+
   
 }
 
