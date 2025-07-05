@@ -98,14 +98,34 @@ submitNameBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && nameModal.style.display === "flex")
+  if (e.key === "Escape" && nameModal.style.display === "flex") {
     nameModal.style.display = "none";
+    return;
+  }
 
   let moved = false;
-  if (e.key === "ArrowLeft") moved = moveLeft();
-  else if (e.key === "ArrowRight") moved = moveRight();
-  else if (e.key === "ArrowUp") moved = moveUp();
-  else if (e.key === "ArrowDown") moved = moveDown();
+
+  switch (e.key) {
+    case "ArrowLeft":
+      moved = moveLeft();
+      break;
+    case "ArrowRight":
+      moved = moveRight();
+      break;
+    case "ArrowUp":
+      moved = moveUp();
+      break;
+    case "ArrowDown":
+      moved = moveDown();
+      break;
+  }
+
+  if (
+    ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].includes(e.key)
+  ) {
+    e.preventDefault(); // ✅ Chặn cuộn trang khi dùng phím
+  }
+
   if (moved) generate();
 });
 
@@ -378,14 +398,3 @@ grid.addEventListener(
 // window.addEventListener("scroll", function () {
 //   window.scrollTo(0, 0);
 // });
-
-window.addEventListener(
-  "keydown",
-  function (e) {
-    const keys = [32, 37, 38, 39, 40]; // Space + arrow keys
-    if (keys.includes(e.keyCode)) {
-      e.preventDefault();
-    }
-  },
-  { passive: false }
-);
