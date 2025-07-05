@@ -73,7 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Touch swipe handler (chỉ trên khu vực grid)
-  const hammertime = new Hammer(document.querySelector(".game-main"));
+  const hammertime = new Hammer(document.getElementById("grid-container"));
+
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) =>
     handleSwipe(ev.type.replace("swipe", ""))
