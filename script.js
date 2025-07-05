@@ -84,9 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener(
     "touchmove",
     function (e) {
-      if (!e.target.closest("#grid-container")) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     },
     { passive: false }
   );
