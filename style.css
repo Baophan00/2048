@@ -341,40 +341,12 @@ button:hover {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 600px) {
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow-x: hidden;
+  .top-players {
+    max-height: 100px;
     overflow-y: auto;
   }
 
   .game-board {
-    padding-bottom: 120px; /* để lưới không bị che bởi thanh điều hướng */
-    height: auto;
-    overflow-y: auto;
-  }
-
-  .top-players {
-    position: relative; /* tránh bị cố định đè lên grid */
-    max-height: 100px;
-    overflow-y: auto;
-    margin-top: 20px;
-  }
-
-  .grid-container {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-
-  .tile, .grid-cell {
-    width: 20vw;
-    height: 20vw;
-  }
-
-  #game-container {
-    padding-bottom: 100px; /* phòng khi bị che thêm */
-    overflow-y: auto;
+    padding-bottom: 80px; /* để hàng cuối không bị che */
   }
 }
