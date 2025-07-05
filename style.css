@@ -349,12 +349,12 @@ button:hover {
   .game-board,
   #grid-container {
     padding-bottom: 100px;
-    padding-bottom: 100px; /* đảm bảo hàng cuối không bị che */
+    padding-bottom: 10px; /* đảm bảo hàng cuối không bị che */
   }
 
   .game-container {
     touch-action: pan-y;
-    max-width: 100vw;
+    max-width: 100vw; 
     padding: 10px;
     box-sizing: border-box;
   }
