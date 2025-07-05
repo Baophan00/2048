@@ -305,7 +305,7 @@ async function loadTopScores() {
     const q = query(
       collection(db, "topScores"),
       orderBy("score", "desc"),
-      limit(5)
+      limit(3)
     );
     const snapshot = await getDocs(q);
     const topScores = [];
