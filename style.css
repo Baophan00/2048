@@ -350,7 +350,32 @@ button:hover {
   .game-board {
     padding-bottom: 80px; /* để hàng cuối không bị che */
   }
+
+  #grid-container {
+    width: 92vw;
+    max-width: 92vw;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 4px;
+    margin: 0 auto 12px auto;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .game-container {
+    padding: 10px;
+    box-sizing: border-box;
+  }
 }
+
 
 
 
