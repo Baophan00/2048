@@ -348,7 +348,8 @@ button:hover {
 
   .game-board,
   #grid-container {
-    padding-bottom: 100px; /* đảm bảo hàng cuối không bị che */
+    padding-bottom: 100px;
+    padding-right: 100px; /* đảm bảo hàng cuối không bị che */
   }
 
   .game-container {
