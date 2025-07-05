@@ -4,15 +4,16 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: 'Press Start 2P', cursive;
   background: linear-gradient(to bottom right, #1c1b27, #2e7568);
   color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
+  touch-action: manipulation;
 }
 
 body {
@@ -68,6 +69,7 @@ body {
   overflow: hidden;
   align-content: stretch;
   justify-content: stretch;
+  position: relative;
 }
 
 .tile {
