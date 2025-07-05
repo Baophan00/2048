@@ -49,6 +49,7 @@ const submitNameBtn = document.getElementById("submit-name-btn");
 // --- UI Events ---
 document.addEventListener("DOMContentLoaded", () => {
   updateScore();
+  loadTopScores();
   musicBtn.addEventListener("click", toggleMusic);
   toggleModeBtn.addEventListener("click", toggleMascotMode);
 
@@ -74,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Touch swipe handler (chỉ trên khu vực grid)
   const hammertime = new Hammer(document.getElementById("grid-container"));
-
   hammertime.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
   hammertime.on("swipeleft swiperight swipeup swipedown", (ev) =>
     handleSwipe(ev.type.replace("swipe", ""))
