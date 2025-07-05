@@ -98,34 +98,14 @@ submitNameBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && nameModal.style.display === "flex") {
+  if (e.key === "Escape" && nameModal.style.display === "flex")
     nameModal.style.display = "none";
-    return;
-  }
 
   let moved = false;
-
-  switch (e.key) {
-    case "ArrowLeft":
-      moved = moveLeft();
-      break;
-    case "ArrowRight":
-      moved = moveRight();
-      break;
-    case "ArrowUp":
-      moved = moveUp();
-      break;
-    case "ArrowDown":
-      moved = moveDown();
-      break;
-  }
-
-  if (
-    ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].includes(e.key)
-  ) {
-    e.preventDefault(); // ✅ Chặn cuộn trang khi dùng phím
-  }
-
+  if (e.key === "ArrowLeft") moved = moveLeft();
+  else if (e.key === "ArrowRight") moved = moveRight();
+  else if (e.key === "ArrowUp") moved = moveUp();
+  else if (e.key === "ArrowDown") moved = moveDown();
   if (moved) generate();
 });
 
@@ -386,8 +366,7 @@ function handleSwipe(dir) {
 }
 
 // --- Prevent Page Scrolling (on mobile + keyboard) ---
-const grid = document.getElementById("grid-container");
-grid.addEventListener(
+document.body.addEventListener(
   "touchmove",
   function (e) {
     e.preventDefault();
@@ -395,6 +374,17 @@ grid.addEventListener(
   { passive: false }
 );
 
-// window.addEventListener("scroll", function () {
-//   window.scrollTo(0, 0);
-// });
+window.addEventListener("scroll", function () {
+  window.scrollTo(0, 0);
+});
+
+window.addEventListener(
+  "keydown",
+  function (e) {
+    const keys = [32, 37, 38, 39, 40]; // Space + arrow keys
+    if (keys.includes(e.keyCode)) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
