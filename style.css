@@ -348,8 +348,13 @@ button:hover {
     overflow-y: auto;
   }
 
-  .game-board {
-    padding-bottom: 80px; /* để hàng cuối không bị che */
+  .game-board,
+  #grid-container {
+    padding-bottom: 100px; /* đảm bảo hàng cuối không bị che */
+  }
+
+  .game-container {
+    touch-action: none; /* ngăn cuộn khi vuốt */
   }
 }
 

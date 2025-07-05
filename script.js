@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   loadTopScores();
+  setTimeout(loadTopScores, 200); // Force reload to fix rendering delay
 });
 
 submitNameBtn.addEventListener("click", () => {
@@ -371,6 +372,14 @@ function handleSwipe(dir) {
 }
 
 // --- Prevent Page Scrolling (on mobile + keyboard) ---
+document.addEventListener(
+  "touchmove",
+  function (e) {
+    e.preventDefault();
+  },
+  { passive: false }
+);
+
 window.addEventListener("scroll", () => window.scrollTo(0, 0));
 window.addEventListener(
   "keydown",
