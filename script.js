@@ -62,6 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
     playBtn.style.display = "none";
     const mascotIntro = document.getElementById("mascot-intro");
     if (mascotIntro) mascotIntro.style.display = "none";
+
+    if (bgMusic.paused) {
+      bgMusic.muted = false;
+      bgMusic.play().catch(() => showToast("⚠️ Tap to allow music."));
+    }
   });
 
   // Touch swipe handler
