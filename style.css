@@ -31,7 +31,7 @@ body {
   max-width: 420px;
   width: 90%;
   position: relative;
-  padding-bottom: 50px; /* Hoặc điều chỉnh đến khi vừa đủ */
+  
 
   
 }
@@ -339,7 +339,12 @@ button:hover {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 600px) {
-  .tile { font-size: 0.8rem; }
-  .title { font-size: 1.2rem; }
-  .score-box, button { font-size: 0.6rem; }
+  .top-players {
+    max-height: 100px;
+    overflow-y: auto;
+  }
+
+  .game-board {
+    padding-bottom: 80px; /* để hàng cuối không bị che */
+  }
 }
