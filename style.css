@@ -67,7 +67,7 @@ body {
   align-content: stretch;
   justify-content: stretch;
   position: relative;
-  
+  /* background: linear-gradient(to bottom, #fffafc, #eaffff);  */
 }
 
 
@@ -377,6 +377,7 @@ button:hover {
     overflow: hidden;
     aspect-ratio: 1; /* giữ tỷ lệ vuông */
     touch-action: none;
+
   }
 
   .tile {
