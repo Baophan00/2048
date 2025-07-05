@@ -378,7 +378,9 @@ function handleSwipe(dir) {
 document.addEventListener(
   "touchmove",
   function (e) {
-    e.preventDefault();
+    if (!e.target.closest("#grid-container")) {
+      e.preventDefault();
+    }
   },
   { passive: false }
 );
