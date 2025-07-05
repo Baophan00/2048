@@ -67,7 +67,7 @@ body {
   align-content: stretch;
   justify-content: stretch;
   position: relative;
-  touch-action: none;
+  
 }
 
 
@@ -368,6 +368,7 @@ button:hover {
     gap: 4px;
     overflow: hidden;
     aspect-ratio: 1; /* giữ tỷ lệ vuông */
+    touch-action: none;
   }
 
   .tile {
