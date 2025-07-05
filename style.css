@@ -343,61 +343,15 @@ button:hover {
 
 /* Mobile styles */
 @media (max-width: 600px) {
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow-x: hidden;
-    background-color: #000;
+  .top-players {
+    max-height: 100px;
+    overflow-y: auto;
   }
 
-  .game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0;
-    height: 100vh;
-    box-sizing: border-box;
-    overflow: hidden;
-    
-  }
-
-  #grid-container {
-    width: 90vw;
-    max-width: 90vw;
-    aspect-ratio: 1 / 1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 10px;
-    flex-shrink: 0;
-  }
-
-  .score-box,
-  .info,
-  .leaderboard-box,
-  button {
-    width: 90vw;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  button {
-    margin: 5px 0;
-    padding: 8px;
-  }
-
-  .game-over {
-    font-size: 18px;
-    color: red;
-  }
-
-  #mascot-overlay img {
-    max-width: 100vw;
-    height: auto;
+  .game-board {
+    padding-bottom: 80px; /* để hàng cuối không bị che */
   }
 }
-
 
 
 
