@@ -341,39 +341,43 @@ button:hover {
 /* --- RESPONSIVE --- */
 /* --- RESPONSIVE --- */
 @media (max-width: 600px) {
-  .top-players {
-    max-height: 100px;
-    overflow-y: auto;
-  }
-
-  .game-board,
-  #grid-container {
-    padding-bottom: 100px;
-    padding-right: 100px; /* đảm bảo hàng cuối không bị che */
+  html, body {
+    height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 100px;     /* tránh che hàng cuối */
+    padding-right: 100px;      /* tránh che cột phải */
+    touch-action: none;        /* ngăn scroll toàn bộ */
   }
 
   .game-container {
-    touch-action: none;
     max-width: 100vw;
     padding: 10px;
     box-sizing: border-box;
+    touch-action: pan-y;      /* chỉ cho phép vuốt trên trục dọc, vuốt ngang để chơi */
   }
 
   #grid-container {
     width: 100%;
-    max-width: 100%;
+    aspect-ratio: 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 4px;
-    overflow: hidden;
-    aspect-ratio: 1; /* giữ tỷ lệ vuông */
+    box-sizing: border-box;
+    padding-bottom: 0;
+    overflow: visible;        /* đảm bảo ô không bị bung bị che */
+    touch-action: none;
   }
 
   .tile {
-    font-size: 4.5vw;
     width: 100%;
-    height: auto;
     aspect-ratio: 1;
+    font-size: 4.5vw;
+  }
+
+  .top-players {
+    max-height: 100px;
+    overflow-y: auto;
   }
 }
 
