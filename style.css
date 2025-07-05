@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* --- RESET + CHỐNG CUỘN --- */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden;
+  touch-action: none;
   font-family: 'Press Start 2P', cursive;
   background: linear-gradient(to bottom right, #1c1b27, #2e7568);
   color: #fff;
@@ -12,6 +15,7 @@ html, body {
   align-items: center;
 }
 
+/* --- GAME CONTAINER --- */
 .game-container {
   text-align: center;
   background: #2b2b3c;
@@ -24,6 +28,7 @@ html, body {
   position: relative;
 }
 
+/* --- TITLE & SCORE --- */
 .title {
   font-size: 1.5rem;
   margin-bottom: 12px;
@@ -43,37 +48,58 @@ html, body {
   user-select: none;
 }
 
+/* --- GRID & TILE --- */
 #grid-container {
   width: 100%;
   aspect-ratio: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-auto-rows: 1fr;
+  gap: 4px;
   margin-bottom: 20px;
-  touch-action: none;
+  overflow: hidden;
+  align-content: stretch;
+  justify-content: stretch;
 }
 
 .tile {
-  background: #22293d;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: bold;
-  aspect-ratio: 1;
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
   border-radius: 8px;
-  animation: pop 0.2s ease;
-  user-select: none;
-  pointer-events: none;
+  overflow: hidden;
+  position: relative;
 }
 
+/* --- TILE IMAGES --- */
+.tile img, .tile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
+  transform: none !important;
+}
+
+/* --- MASCOT MODE OVERRIDES --- */
+.mascot-mode .tile img {
+  transform: none !important;
+  animation: none !important;
+}
+
+/* --- TILE POP ANIMATION --- */
 @keyframes pop {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.03); }
   100% { transform: scale(1); }
 }
 
+/* --- BUTTONS --- */
 button {
   background: #00ffcc;
   color: #000;
@@ -99,6 +125,7 @@ button:hover {
   box-shadow: 0 0 10px #ff4c4c;
 }
 
+/* --- INFO --- */
 .info {
   font-size: 0.6rem;
   opacity: 0.8;
@@ -106,6 +133,7 @@ button:hover {
   user-select: none;
 }
 
+/* --- TOAST --- */
 .toast {
   position: fixed;
   bottom: 20px;
@@ -128,6 +156,7 @@ button:hover {
   transform: translateX(-50%) scale(1);
 }
 
+/* --- PULSE --- */
 .pulse {
   animation: pulseAnim 1s infinite;
 }
@@ -138,6 +167,7 @@ button:hover {
   100% { box-shadow: 0 0 5px #00ffcc; }
 }
 
+/* --- LEADERBOARD --- */
 .leaderboard-box {
   font-size: 0.6rem;
   background: #111a1a;
@@ -149,6 +179,39 @@ button:hover {
   user-select: none;
 }
 
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dashed #00ffcc;
+  font-size: 0.65rem;
+  color: #e0f7f5;
+}
+
+.leaderboard-entry .rank {
+  width: 1.2em;
+  text-align: right;
+  margin-right: 6px;
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.leaderboard-entry .name {
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-entry .score {
+  min-width: 3em;
+  text-align: right;
+  font-family: monospace;
+}
+
+/* --- GAME OVER --- */
 .game-over {
   font-size: 1.2rem;
   font-weight: bold;
@@ -163,7 +226,7 @@ button:hover {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Mascot overlay */
+/* --- MASCOT OVERLAY --- */
 #mascot-overlay {
   position: absolute;
   width: 320px;
@@ -208,51 +271,7 @@ button:hover {
   transform-origin: bottom center;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .tile { font-size: 0.8rem; }
-  .title { font-size: 1.2rem; }
-  .score-box, button { font-size: 0.6rem; }
-}
-
-/* Leaderboard */
-.leaderboard-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 0;
-  border-bottom: 1px dashed #00ffcc;
-  font-size: 0.65rem;
-  color: #e0f7f5;
-}
-
-.leaderboard-entry .rank {
-  width: 1.2em;
-  text-align: right;
-  margin-right: 6px;
-  color: #00ffff;
-  font-weight: bold;
-}
-
-.leaderboard-entry .name {
-  flex-grow: 1;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.leaderboard-entry .score {
-  min-width: 3em;
-  text-align: right;
-  font-family: monospace;
-}
-
-.leaderboard-entry {
-  border-bottom: none !important;
-}
-
-/* Modal */
+/* --- MODAL --- */
 .modal {
   position: fixed;
   top: 0;
@@ -298,7 +317,6 @@ button:hover {
   box-sizing: border-box;
 }
 
-/* Prevent iOS zoom on input */
 #player-name-input {
   font-size: 16px;
   padding: 10px;
@@ -309,4 +327,11 @@ button:hover {
 .modal-content button {
   padding: 8px 16px;
   font-size: 0.7rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+  .tile { font-size: 0.8rem; }
+  .title { font-size: 1.2rem; }
+  .score-box, button { font-size: 0.6rem; }
 }
