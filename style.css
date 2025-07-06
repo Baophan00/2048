@@ -352,9 +352,15 @@ button:hover {
 .control-buttons {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-wrap: nowrap;
+  gap: 8px;
   margin-bottom: 10px;
+}
+
+.control-buttons button {
+  white-space: nowrap; 
+  flex: 1 1 calc(33.33% - 10px);
+  min-width: 0;
 }
 
 
@@ -408,10 +414,6 @@ button:hover {
     will-change: transform;
   }
 
-  .control-buttons button {
-    flex: 1 1 30%;
-    min-width: 90px;
-  }
 }
 
 
