@@ -349,6 +349,15 @@ button:hover {
   font-size: 0.7rem;
 }
 
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+
 /* --- RESPONSIVE --- */
 /* --- RESPONSIVE --- */
 
@@ -398,5 +407,12 @@ button:hover {
     transition: transform 0.15s ease-out, background-color 0.2s ease;
     will-change: transform;
   }
+
+  .control-buttons button {
+    flex: 1 1 30%;
+    min-width: 90px;
+  }
 }
+
+
 
