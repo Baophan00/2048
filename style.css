@@ -43,18 +43,22 @@ body {
 }
 
 .score-box {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   background: #1f1f2e;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   color: #00ffcc;
   border: 2px solid #00ffcc;
-  display: inline-block;
-  user-select: none;
-  min-width: 220px;
-  white-space: nowrap;
-
+  display: flex;                /* 👈 Dùng flex layout */
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;                     /* 👈 Khoảng cách giữa các phần */
+  white-space: nowrap;         /* 👈 Không cho xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis;     /* 👈 Hiển thị "..." nếu quá dài */
+  max-width: 100%;             /* 👈 Không vượt quá khung cha */
+  box-sizing: border-box;  
 
 }
 
