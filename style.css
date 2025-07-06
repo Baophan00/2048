@@ -251,7 +251,7 @@ button:hover {
   position: absolute;
   width: 320px;
   height: 320px;
-  top: 43%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: transparent;
