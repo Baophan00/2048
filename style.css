@@ -52,7 +52,13 @@ body {
   border: 2px solid #00ffcc;
   display: inline-block;
   user-select: none;
+  min-width: 220px;
+  white-space: nowrap;
+
+
 }
+
+
 
 /* --- GRID & TILE --- */
 #grid-container {

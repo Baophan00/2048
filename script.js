@@ -98,7 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 submitNameBtn.addEventListener("click", () => {
-  const playerName = nameInput.value.trim() || "anonymous";
+  // const playerName = nameInput.value.trim() || "anonymous";
+  let playerName = nameInput.value.trim();
+  if (playerName.startsWith("@")) {
+    playerName = playerName.substring(1); // bỏ dấu @ nếu có
+  }
+
   saveScore(playerName, score, "none");
   if (score > highScore) {
     highScore = score;
@@ -327,7 +332,11 @@ async function loadTopScores() {
             (entry, i) => `
           <div class="leaderboard-entry">
             <div class="rank">${i + 1}.</div>
-            <div class="name">${entry.addr}</div>
+            <div class="name">
+            <a href="https://twitter.com/${entry.addr}" target="_blank">@${
+              entry.addr
+            }</a>
+            </div>
             <div class="score">${entry.score}</div>
           </div>`
           )
