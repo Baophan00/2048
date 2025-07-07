@@ -311,6 +311,8 @@ function getTileColor(value) {
     512: "#a8f8ec",
     1024: "#d2fbf5",
     2048: "#ffffff",
+    4096: "#ffe9e9",
+    8192: "#ffcccc",
   };
   return colors[value] || "#ffffff";
 }
