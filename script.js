@@ -328,19 +328,20 @@ async function loadTopScores() {
     const snapshot = await getDocs(q);
     const topScores = [];
     snapshot.forEach((doc) => topScores.push(doc.data()));
+    const medals = ["🥇", "🥈", "🥉"];
     leaderboardBox.innerHTML = topScores.length
       ? topScores
           .map(
             (entry, i) => `
-          <div class="leaderboard-entry">
-            <div class="rank">${i + 1}.</div>
-            <div class="name">
-            <a href="https://twitter.com/${entry.addr}" target="_blank">@${
+      <div class="leaderboard-entry">
+        <div class="rank">${medals[i] || `${i + 1}.`}</div>
+        <div class="name">
+        <a href="https://twitter.com/${entry.addr}" target="_blank">@${
               entry.addr
             }</a>
-            </div>
-            <div class="score">${entry.score}</div>
-          </div>`
+        </div>
+        <div class="score">${entry.score}</div>
+      </div>`
           )
           .join("")
       : "No scores yet.";
