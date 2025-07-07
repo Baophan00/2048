@@ -364,6 +364,8 @@ button:hover {
 }
 
 
+
+
 /* --- RESPONSIVE --- */
 /* --- RESPONSIVE --- */
 
@@ -415,6 +417,12 @@ button:hover {
   }
 
 }
+
+.leaderboard-box a {
+  text-decoration: none;     /* ❌ bỏ gạch chân */
+  color: #00ffcc !important; /* ✅ dùng màu như "Top Players" */
+}
+
 
 
 
