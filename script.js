@@ -166,7 +166,7 @@ function toggleMusic() {
 
 function toggleMascotMode() {
   mascotMode = !mascotMode;
-  toggleModeBtn.textContent = mascotMode ? "❌ Hide Icon" : "🖼 Irys Mode";
+  toggleModeBtn.textContent = mascotMode ? "❌ Hide Icon" : "🪄 Irys Mode";
   updateBoard();
 }
 
