@@ -408,3 +408,65 @@ window.addEventListener(
   },
   { passive: false }
 );
+
+// === Floating Stickers Around Top Players ===
+const stickerImages = [
+  "https://irys.xyz/assets/characters/character-1.svg",
+  "https://irys.xyz/assets/characters/character-2.svg",
+  "https://irys.xyz/assets/characters/character-3.svg",
+  "https://irys.xyz/assets/characters/character-4.svg",
+  "https://irys.xyz/assets/characters/character-5.svg",
+];
+
+function createBouncingSticker() {
+  const box = document.querySelector(".leaderboard-box");
+  if (!box) return;
+
+  const sticker = document.createElement("img");
+  sticker.src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
+  sticker.className = "bouncing-sticker";
+
+  const size = 36;
+  const boxRect = box.getBoundingClientRect();
+
+  let x = Math.random() * (box.clientWidth - size);
+  let y = Math.random() * (box.clientHeight - size);
+
+  let dx = (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.5);
+  let dy = (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.5);
+
+  sticker.style.left = `${x}px`;
+  sticker.style.top = `${y}px`;
+
+  box.appendChild(sticker);
+
+  function move() {
+    x += dx;
+    y += dy;
+
+    if (x <= 0 || x + size >= box.clientWidth) dx *= -1;
+    if (y <= 0 || y + size >= box.clientHeight) dy *= -1;
+
+    sticker.style.transform = `translate(${x}px, ${y}px)`;
+    sticker._anim = requestAnimationFrame(move);
+  }
+
+  move();
+  // ✅ Thêm hiệu ứng explode khi click
+  sticker.addEventListener("click", () => {
+    cancelAnimationFrame(sticker._anim); // Dừng di chuyển
+    sticker.classList.add("explode-effect"); // Thêm class hiệu ứng
+    setTimeout(() => {
+      sticker.remove(); // Xoá sau hiệu ứng
+    }, 500); // Khớp với animation thời gian explode
+  });
+
+  // Sticker tồn tại 10s rồi tự hủy
+  // setTimeout(() => {
+  //   cancelAnimationFrame(sticker._anim);
+  //   sticker.remove();
+  // }, 10000);
+}
+
+// Tạo sticker mới mỗi 1.5s
+setInterval(createBouncingSticker, 1500);
