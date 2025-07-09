@@ -204,7 +204,7 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   padding: 4px 0;
-  border-bottom: 1px dashed #00ffcc;
+  /* border-bottom: 1px dashed #00ffcc; */
   font-size: 0.65rem;
   color: #e0f7f5;
 }

@@ -440,6 +440,21 @@ function createBouncingSticker() {
 
   box.appendChild(sticker);
 
+  // 👇 Bổ sung: sự kiện khi nhấn hoặc chạm vào sticker
+  sticker.addEventListener("click", handleStickerRemove);
+  sticker.addEventListener("touchstart", handleStickerRemove);
+
+  function handleStickerRemove() {
+    sticker.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+    sticker.style.transform += " scale(1.5) rotate(20deg)";
+    sticker.style.opacity = "0";
+
+    cancelAnimationFrame(sticker._anim); // dừng di chuyển
+    setTimeout(() => {
+      sticker.remove();
+    }, 300);
+  }
+
   function move() {
     x += dx;
     y += dy;
@@ -452,16 +467,8 @@ function createBouncingSticker() {
   }
 
   move();
-  // ✅ Thêm hiệu ứng explode khi click
-  sticker.addEventListener("click", () => {
-    cancelAnimationFrame(sticker._anim); // Dừng di chuyển
-    sticker.classList.add("explode-effect"); // Thêm class hiệu ứng
-    setTimeout(() => {
-      sticker.remove(); // Xoá sau hiệu ứng
-    }, 500); // Khớp với animation thời gian explode
-  });
 
-  // Sticker tồn tại 10s rồi tự hủy
+  // Nếu bạn muốn sticker tồn tại mãi thì giữ nguyên đoạn này comment
   // setTimeout(() => {
   //   cancelAnimationFrame(sticker._anim);
   //   sticker.remove();
