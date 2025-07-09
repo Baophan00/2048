@@ -499,3 +499,6 @@ button:hover {
   pointer-events: none; /* Không cho click tiếp sau khi đã nổ */
 }
 
+.leaderboard-entry {
+  border-bottom: none !important;
+}
